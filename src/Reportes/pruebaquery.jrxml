@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="pruebaquery" pageWidth="792" pageHeight="612" orientation="Landscape" columnWidth="752" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c3e9cda7-520e-4ad4-a7e1-4c9030fedae2">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="query" class="java.lang.String"/>
+	<parameter name="titulo" class="java.lang.String"/>
+	<parameter name="logo" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT e.alias, concat(LEFT(m.nombremes,3),'-', b.periodo) as Periodo, b.moneda_local +b.moneda_extranjera as Total
+FROM 5dias.balance_general b, 5dias.cuenta_balance c, 5dias.entidades e,  5dias.meses m
+where c.idcuenta_balance=b.idcuenta and b.identidades=e.identidades and b.mes=m.codmes
+and idcuenta_balance=$P!{query}]]>
+	</queryString>
+	<field name="alias" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="Periodo" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="Total" class="java.lang.Long"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="107" splitType="Stretch">
+			<textField>
+				<reportElement x="178" y="33" width="554" height="37" forecolor="#CC0000" uuid="95c8c94d-e74e-414a-b6a2-eed602ff7126"/>
+				<textElement>
+					<font size="24"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{titulo}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="7" y="7" width="151" height="89" uuid="434d1f85-52fb-4911-89d5-cacae9f59115"/>
+				<imageExpression><![CDATA[$P{logo}]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<summary>
+		<band height="441" splitType="Stretch">
+			<lineChart>
+				<chart>
+					<reportElement x="0" y="0" width="752" height="441" uuid="b9bace82-8239-448a-96a8-4bc8e76547b1"/>
+					<chartTitle/>
+					<chartSubtitle/>
+					<chartLegend/>
+				</chart>
+				<categoryDataset>
+					<categorySeries>
+						<seriesExpression><![CDATA[$F{alias}]]></seriesExpression>
+						<categoryExpression><![CDATA[$F{Periodo}]]></categoryExpression>
+						<valueExpression><![CDATA[$F{Total}]]></valueExpression>
+					</categorySeries>
+				</categoryDataset>
+				<linePlot>
+					<plot labelRotation="50.0"/>
+					<categoryAxisFormat labelRotation="50.0">
+						<axisFormat verticalTickLabels="true">
+							<tickLabelFont>
+								<font size="8"/>
+							</tickLabelFont>
+						</axisFormat>
+					</categoryAxisFormat>
+					<valueAxisFormat>
+						<axisFormat>
+							<labelFont>
+								<font size="8"/>
+							</labelFont>
+						</axisFormat>
+					</valueAxisFormat>
+				</linePlot>
+			</lineChart>
+		</band>
+	</summary>
+</jasperReport>
