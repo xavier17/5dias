@@ -6,6 +6,7 @@ package Vista;
 
 import Conexion.Conexion;
 import Conexion.Control;
+import Controlador.ControladorReporte;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.ComponentOrientation;
@@ -145,6 +146,11 @@ public class Portada extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("5dias");
         setIconImage(getIconImage());
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanelPrincipalLayout = new javax.swing.GroupLayout(jPanelPrincipal);
         jPanelPrincipal.setLayout(jPanelPrincipalLayout);
@@ -257,19 +263,22 @@ public class Portada extends javax.swing.JFrame {
 
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
         // Banco F1
-        VistaBanco tab = new VistaBanco();
-        this.ventana(tab);
+//        VistaBanco tab = new VistaBanco();
+//        this.ventana(tab);
+        BalanceGeneral bg = new BalanceGeneral();
+        VerjDialog(bg, 1024, 700);
     }//GEN-LAST:event_jMenuItem3ActionPerformed
 
     private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
         // TODO add your handling code here:
-
+        CuentaResultado cr = new CuentaResultado();
+        VerjDialog(cr, 1050, 700);
     }//GEN-LAST:event_jMenuItem4ActionPerformed
 
     private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
         // TODO add your handling code here:
         InformacionAdicional ia = new InformacionAdicional();
-        VerjDialog(ia, 1024, 700);
+        VerjDialog(ia, 1000, 700);
     }//GEN-LAST:event_jMenuItem5ActionPerformed
 
     private void jMenuItem6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem6ActionPerformed
@@ -285,6 +294,12 @@ public class Portada extends javax.swing.JFrame {
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jMenuItem2ActionPerformed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        // TODO add your handling code here:
+        ControladorReporte cr = new ControladorReporte();
+        cr.deleteReport(System.getProperty("user.dir")+"\\Reportes");
+    }//GEN-LAST:event_formWindowClosing
 
     /**
      * @param args the command line arguments

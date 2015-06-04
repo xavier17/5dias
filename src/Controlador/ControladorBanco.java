@@ -15,6 +15,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
@@ -37,7 +38,7 @@ public class ControladorBanco {
             //System.out.println(pstmt.toString());
             ResultSet rs = pstmt.executeQuery();
             jTable1 = load.cargar_corrido(jTable1, rs);
-           // load.poner_puntos_concoma(jTable1, 2);
+            // load.poner_puntos_concoma(jTable1, 2);
             //this.diferencia(jTable1);
             //int ancho[] = {400, 50, 50, 100};
             //load.ancho(jTable1, ancho);
@@ -48,20 +49,20 @@ public class ControladorBanco {
         }
     }
 
-    public void balanceMes_Mes(ModeloBanco MB, JTable jTable1) {
+    public void cuentaResulSistema(ModeloBanco MB, JTable jTable1) {
         try {
-            String query = "SELECT e.denominacion, c.descripcion,\n"
-                    + "SUM(CASE WHEN  (b.mes) =? AND periodo=? AND b.idcuenta=?  \n"
+            String query = "SELECT c.descripcion,\n"
+                    + "SUM(CASE WHEN  (b.mes) =? AND periodo=? AND b.idcuenta_estado=? \n"
                     + "THEN b.moneda_local+b.moneda_extranjera ELSE 0 END) AS 'mes1',\n"
-                    + "SUM(CASE WHEN  (b.mes) =? AND periodo=? AND b.idcuenta=?  \n"
+                    + "SUM(CASE WHEN  (b.mes) =? AND periodo=? AND b.idcuenta_estado=?\n"
                     + "THEN b.moneda_local+b.moneda_extranjera ELSE 0 END) AS 'mes2'\n"
-                    + "FROM balance_general b\n"
-                    + "INNER JOIN entidades e\n"
+                    + "FROM 5dias.estado_ganancia_perdidas b\n"
+                    + "INNER JOIN 5dias.entidades e\n"
                     + "ON b.identidades=e.identidades\n"
-                    + "INNER JOIN cuenta_balance c\n"
-                    + "ON  b.idcuenta=c.idcuenta_balance\n"
-                    + "WHERE b.idcuenta=? \n"
-                    + "GROUP BY b.identidades,idcuenta\n"
+                    + "INNER JOIN 5dias.cuenta_estado c\n"
+                    + "ON  b.idcuenta_estado=c.idcuenta_estado\n"
+                    + "WHERE b.idcuenta_estado=?\n"
+                    + "GROUP BY b.idcuenta_estado\n"
                     + "ORDER BY e.denominacion";
             PreparedStatement pstmt = c.prepareStatement(query);
             pstmt.setInt(1, MB.getMes1());
@@ -72,16 +73,13 @@ public class ControladorBanco {
             pstmt.setInt(6, MB.getIdcuenta());
             pstmt.setInt(7, MB.getIdcuenta());
             ResultSet rs = pstmt.executeQuery();
-            jTable1 = load.cargar(jTable1, rs);
-            load.poner_puntos_concoma(jTable1, 2);
-            load.poner_puntos_concoma(jTable1, 3);
-            this.comparativo(jTable1);
-            int ancho[] = {400, 100, 50, 50, 50,};
-            load.ancho(jTable1, ancho);
-            jTable1.getColumn("denominacion").setHeaderValue("Banco");
-            jTable1.getColumn("descripcion").setHeaderValue("Cuenta");
-            jTable1.getColumn("mes1").setHeaderValue(MB.getNombremes1());
-            jTable1.getColumn("mes2").setHeaderValue(MB.getNombremes2());
+            jTable1 = load.cargar_corrido(jTable1, rs);
+            
+//            load.poner_puntos_concoma(jTable1, 2);
+//            load.poner_puntos_concoma(jTable1, 3);
+//            this.comparativo(jTable1);
+//            int ancho[] = {400, 50, 50, 50,};
+//            load.ancho(jTable1, ancho);
             pstmt.close();
         } catch (SQLException ex) {
             control.mensaje_error(ex.getMessage());
@@ -129,13 +127,34 @@ public class ControladorBanco {
         }
     }
     
+     public void variacion(JTable tabla) {
+//        //valores en un arreglo con nombres de personas
+        int cant_datos = tabla.getRowCount();
+        //creo un modelo para manejar la jTable
+        DefaultTableModel model = (DefaultTableModel) tabla.getModel();
+        model.addColumn("Variacion");
+
+        //Agrego las filas recorriendo el arreglo valores
+        for (int x = 0; x < cant_datos; x++) {
+            String mes1 = (String) tabla.getValueAt(x, 1);
+            String mes2 = (String) tabla.getValueAt(x, 2);
+            double mesuno = Double.valueOf(mes1);
+            double mesdos = Double.valueOf(mes2);
+            double resul = (mesdos/mesuno-1)*100;
+            DecimalFormat twoDForm = new DecimalFormat("#");
+            //System.out.println("resul"+resul);
+            String resultado = twoDForm.format(resul)+"%";
+            tabla.setValueAt(resultado, x, 3);
+        }
+    }
+
     public void descripcionCuenta(ModeloBanco MB) {
         try {
             String query = "SELECT descripcion FROM cuenta_balance where idcuenta_balance=?";
             PreparedStatement pstmt = c.prepareStatement(query);
             pstmt.setInt(1, MB.getIdcuenta());
             ResultSet rs = pstmt.executeQuery();
-            if(rs.next()){
+            if (rs.next()) {
                 MB.setCuenta(rs.getObject(1).toString());
             }
             pstmt.close();
@@ -143,14 +162,14 @@ public class ControladorBanco {
             control.mensaje_error(ex.getMessage());
         }
     }
-    
+
     public void descripcionInforma(ModeloBanco MB) {
         try {
             String query = "SELECT descripcion FROM cuenta_informacion where idcuenta_informacion=?";
             PreparedStatement pstmt = c.prepareStatement(query);
             pstmt.setInt(1, MB.getIdcuenta());
             ResultSet rs = pstmt.executeQuery();
-            if(rs.next()){
+            if (rs.next()) {
                 MB.setCuenta(rs.getObject(1).toString());
             }
             pstmt.close();

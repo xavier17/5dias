@@ -222,5 +222,13 @@ public class Cargar {
         }
         return tabla;
     }
+    
+    public JTable nombreCol(JTable tabla, String nombre[]) {
+        for (int i = 0; i < tabla.getColumnCount(); i++) {
+            //System.out.print(tabla.getColumn(i));
+            tabla.getColumn(tabla.getColumnName(i)).setHeaderValue(nombre[i]);
+        }
+        return tabla;
+    }
 
 }

@@ -7,6 +7,7 @@ package Vista;
 
 import Conexion.Cargar;
 import Conexion.Control;
+import Conexion.ExportExcel;
 import Conexion.MergePDF;
 import Conexion.ObtenerFecha;
 import Conexion.ObtenerNumero;
@@ -15,7 +16,12 @@ import Controlador.ControladorReporte;
 import Modelo.ModeloBanco;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
 
 /**
  *
@@ -30,7 +36,7 @@ public class CuentaResultado extends javax.swing.JFrame {
         initComponents();
         load.LlenarList(jListCuenResul, "SELECT descripcion FROM cuenta_estado;");
     }
-    
+
     Cargar load = new Cargar();
     ObtenerNumero on = new ObtenerNumero();
     ObtenerFecha of = new ObtenerFecha();
@@ -593,7 +599,7 @@ public class CuentaResultado extends javax.swing.JFrame {
             ControladorReporte CR = new ControladorReporte();
             int[] cuenta = jListCuenResul.getSelectedIndices();
             //String[] descripcion = (String[]) jListBalanceGral.getSelectedValues();
-            for (int i = 0; i < cuenta.length; i++) {  
+            for (int i = 0; i < cuenta.length; i++) {
                 ModeloBanco mb = new ModeloBanco();
                 mb.setIdcuenta(cuenta[i] + 1);
                 CB.descripcionCuenta(mb);
@@ -606,7 +612,7 @@ public class CuentaResultado extends javax.swing.JFrame {
                     mb.setNombrepdf("Report1.pdf");
                 }
 
-                CR.ejecutarReporte_deposito("pruebaquery.jasper", mb);
+//                CR.ejecutarReporte_deposito("pruebaquery.jasper", mb);
                 System.out.println("\n\nQueryReport:" + mb.getQueryreport() + "idcuentaBal" + mb.getIdcuenta());
 
                 if (i == 1) {
@@ -644,23 +650,23 @@ public class CuentaResultado extends javax.swing.JFrame {
         //this.querybuscar(mb);
         for (int i = 0; i < cuenta.length; i++) {
             mb.setIdcuenta(cuenta[i] + 1);
-            if(jComboBox4.getSelectedIndex()==0){
+            if (jComboBox4.getSelectedIndex() == 0) {
                 CB.cuentaResulSistema(mb, jTable1);
             }
             //System.out.println("Cuentaid:"+mb.getIdcuenta());
         }
-        
-        if(jComboBox4.getSelectedIndex()==0){
-            CB.variacion(jTable1);  
+
+        if (jComboBox4.getSelectedIndex() == 0) {
+            CB.variacion(jTable1);
             load.poner_puntos(jTable1, 1);
             load.poner_puntos(jTable1, 2);
             int ancho[] = {200, 50, 50, 50,};
             load.ancho(jTable1, ancho);
-            String col[]={"Cuenta",mb.getNombremes1()+"-"+mb.getPer1(), mb.getNombremes2()+"-"+mb.getPer2(), "Variacion"};
+            String col[] = {"Cuenta", mb.getNombremes1() + "-" + mb.getPer1(), mb.getNombremes2() + "-" + mb.getPer2(), "Variacion"};
             load.nombreCol(jTable1, col);
         }
-        
-       // load.poner_puntos_concoma(jTable1, 3);
+
+        // load.poner_puntos_concoma(jTable1, 3);
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void jButton6KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jButton6KeyReleased
@@ -703,7 +709,30 @@ public class CuentaResultado extends javax.swing.JFrame {
 
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
         // BT export excel
-        
+        if (jTable1.getRowCount() <= 0) {
+            control.mensaje_error("Tabla Vacia");
+            return;
+        }
+
+        JFileChooser dialog = new JFileChooser();
+        int opcion = dialog.showSaveDialog(this);
+
+        if (opcion == JFileChooser.APPROVE_OPTION) {
+            File dir = dialog.getSelectedFile();
+            String fl = dir.toString();
+
+            try {
+                List<JTable> tb = new ArrayList<JTable>();
+                tb.add(jTable1);
+                //-------------------
+                ExportExcel excelExporter = new ExportExcel(tb, new File(fl + ".xls"));
+                if (excelExporter.export()) {
+                    JOptionPane.showMessageDialog(null, "TABLAS EXPORTADOS CON EXITOS!");
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
     }//GEN-LAST:event_jButton7ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed

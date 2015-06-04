@@ -13,6 +13,7 @@ import Conexion.ObtenerNumero;
 import Controlador.ControladorBanco;
 import Controlador.ControladorReporte;
 import Modelo.ModeloBanco;
+import Modelo.ModeloReport;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.Date;
@@ -31,7 +32,7 @@ public class BalanceGeneral extends javax.swing.JFrame {
     public BalanceGeneral() {
         initComponents();
         load.LlenarList(jListBalanceGral, "SELECT descripcion FROM cuenta_balance;");
-         //load.LlenarList(jListBalanceGral, "SELECT descripcion FROM diasticocuenta_balance;");
+        //load.LlenarList(jListBalanceGral, "SELECT descripcion FROM diasticocuenta_balance;");
     }
     Cargar load = new Cargar();
     ObtenerNumero on = new ObtenerNumero();
@@ -39,7 +40,6 @@ public class BalanceGeneral extends javax.swing.JFrame {
     ControladorBanco CB = new ControladorBanco();
     Control control = new Control();
     MergePDF pdf = new MergePDF();
-
 
     public void desde_hasta(ModeloBanco MB) {
         try {
@@ -65,66 +65,59 @@ public class BalanceGeneral extends javax.swing.JFrame {
     }
 
     public void impCheckSel(ModeloBanco MB) {
-//        if (jCheckBox16.isSelected()) {
-//            MB.setArrCheck(0, 16);
-//        }
-//        if (jCheckBox5.isSelected()) {
-//            MB.setArrCheck(1, 1);
-//        }
-//        if (jCheckBox1.isSelected()) {
-//            MB.setArrCheck(2, 2);
-//        }
-//        if (jCheckBox3.isSelected()) {
-//            MB.setArrCheck(3, 3);
-//        }
-//        if (jCheckBox4.isSelected()) {
-//            MB.setArrCheck(4, 4);
-//        }
-//        if (jCheckBox2.isSelected()) {
-//            MB.setArrCheck(5, 5);
-//        }
-//        if (jCheckBox6.isSelected()) {
-//            MB.setArrCheck(6, 6);
-//        }
-//        if (jCheckBox7.isSelected()) {
-//            MB.setArrCheck(7, 7);
-//        }
-//        if (jCheckBox8.isSelected()) {
-//            MB.setArrCheck(8, 8);
-//        }
-//        if (jCheckBox12.isSelected()) {
-//            MB.setArrCheck(9, 9);
-//        }
-//        if (jCheckBox9.isSelected()) {
-//            MB.setArrCheck(10, 10);
-//        }
-//        if (jCheckBox10.isSelected()) {
-//            MB.setArrCheck(11, 11);
-//        }
-//        if (jCheckBox11.isSelected()) {
-//            MB.setArrCheck(12, 12);
-//        }
-//        if (jCheckBox15.isSelected()) {
-//            MB.setArrCheck(13, 13);
-//        }
-//        if (jCheckBox13.isSelected()) {
-//            MB.setArrCheck(14, 14);
-//        }
-//        if (jCheckBox14.isSelected()) {
-//            MB.setArrCheck(15, 15);
-//        }
+        if (jCheckBox16.isSelected()) {
+            MB.setArrCheck(0, 16);
+        }
+        if (jCheckBox5.isSelected()) {
+            MB.setArrCheck(1, 1);
+        }
+        if (jCheckBox1.isSelected()) {
+            MB.setArrCheck(2, 2);
+        }
+        if (jCheckBox3.isSelected()) {
+            MB.setArrCheck(3, 3);
+        }
+        if (jCheckBox4.isSelected()) {
+            MB.setArrCheck(4, 4);
+        }
+        if (jCheckBox2.isSelected()) {
+            MB.setArrCheck(5, 5);
+        }
+        if (jCheckBox6.isSelected()) {
+            MB.setArrCheck(6, 6);
+        }
+        if (jCheckBox7.isSelected()) {
+            MB.setArrCheck(7, 7);
+        }
+        if (jCheckBox8.isSelected()) {
+            MB.setArrCheck(8, 8);
+        }
+        if (jCheckBox12.isSelected()) {
+            MB.setArrCheck(9, 9);
+        }
+        if (jCheckBox9.isSelected()) {
+            MB.setArrCheck(10, 10);
+        }
+        if (jCheckBox10.isSelected()) {
+            MB.setArrCheck(11, 11);
+        }
+        if (jCheckBox11.isSelected()) {
+            MB.setArrCheck(12, 12);
+        }
+        if (jCheckBox15.isSelected()) {
+            MB.setArrCheck(13, 13);
+        }
+        if (jCheckBox13.isSelected()) {
+            MB.setArrCheck(14, 14);
+        }
+        if (jCheckBox14.isSelected()) {
+            MB.setArrCheck(15, 15);
+        }
         for (int i = 0; i < 16; i++) {
             if (MB.getArrCheck(i) != 0) {
                 MB.setINbancos(MB.getINbancos() + "," + MB.getArrCheck(i));
             }
         }
-
-        if (MB.getINbancos() == null) {
-            control.mensaje_error("Debe seleccionar un banco!");
-        } else {
-            MB.setINbancos(MB.getINbancos().substring(5));
-        }
-
     }
 
     //arma el query de acuerdo a lo seleccionado
@@ -133,7 +126,8 @@ public class BalanceGeneral extends javax.swing.JFrame {
         this.desde_hasta(MB);
         if (jComboBox4.getSelectedIndex() == 1) {
             this.impCheckSel(MB);
-            inbanco = "and e.identidades IN(" + MB.getINbancos() + ") \n";
+            MB.setINbancos(MB.getINbancos().substring(5));
+            inbanco = "and e.identidades IN(" + MB.getINbancos() + ")\n";
         }
 
         MB.setQuery("SELECT e.alias as Banco,c.descripcion, concat(LEFT(m.nombremes,3),'-', b.periodo) as Periodo, b.moneda_local +b.moneda_extranjera as Total\n"
@@ -153,7 +147,7 @@ public class BalanceGeneral extends javax.swing.JFrame {
         ventana.setResizable(false);
         ventana.setVisible(true);
     }
-    
+
 //    public void ventana(JPanel tab) {
 //        tab.setSize(jTabbedPane1.getSize());
 //        jTabbedPane1.removeAll();
@@ -170,6 +164,33 @@ public class BalanceGeneral extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jDialogBancos = new javax.swing.JDialog();
+        jLabel2 = new javax.swing.JLabel();
+        jSeparator1 = new javax.swing.JSeparator();
+        jCheckBox1 = new javax.swing.JCheckBox();
+        jCheckBox2 = new javax.swing.JCheckBox();
+        jCheckBox3 = new javax.swing.JCheckBox();
+        jCheckBox4 = new javax.swing.JCheckBox();
+        jLabel3 = new javax.swing.JLabel();
+        jSeparator2 = new javax.swing.JSeparator();
+        jCheckBox5 = new javax.swing.JCheckBox();
+        jButton1 = new javax.swing.JButton();
+        jCheckBox6 = new javax.swing.JCheckBox();
+        jCheckBox7 = new javax.swing.JCheckBox();
+        jLabel4 = new javax.swing.JLabel();
+        jSeparator3 = new javax.swing.JSeparator();
+        jCheckBox8 = new javax.swing.JCheckBox();
+        jCheckBox9 = new javax.swing.JCheckBox();
+        jCheckBox10 = new javax.swing.JCheckBox();
+        jCheckBox11 = new javax.swing.JCheckBox();
+        jCheckBox12 = new javax.swing.JCheckBox();
+        jCheckBox13 = new javax.swing.JCheckBox();
+        jCheckBox14 = new javax.swing.JCheckBox();
+        jCheckBox15 = new javax.swing.JCheckBox();
+        jLabel8 = new javax.swing.JLabel();
+        jSeparator4 = new javax.swing.JSeparator();
+        jCheckBox16 = new javax.swing.JCheckBox();
+        jCheckBox17 = new javax.swing.JCheckBox();
         jPanel7 = new javax.swing.JPanel();
         jPanel5 = new javax.swing.JPanel();
         jButton5 = new javax.swing.JButton();
@@ -179,20 +200,179 @@ public class BalanceGeneral extends javax.swing.JFrame {
         jTextField6 = new javax.swing.JTextField();
         jTextField7 = new javax.swing.JTextField();
         jTextField8 = new javax.swing.JTextField();
-        jComboBox3 = new javax.swing.JComboBox();
         jComboBox4 = new javax.swing.JComboBox();
         jLabel7 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
         jScrollPane4 = new javax.swing.JScrollPane();
         jListBalanceGral = new javax.swing.JList();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jPanel8 = new javax.swing.JPanel();
-        jPanel9 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
-        jLabel14 = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        jDialogBancos.setTitle(org.openide.util.NbBundle.getMessage(BalanceGeneral.class, "BalanceGeneral.jDialogBancos.title")); // NOI18N
+
+        jLabel2.setText(org.openide.util.NbBundle.getMessage(BalanceGeneral.class, "BalanceGeneral.jLabel2.text")); // NOI18N
+
+        jCheckBox1.setText(org.openide.util.NbBundle.getMessage(BalanceGeneral.class, "BalanceGeneral.jCheckBox1.text")); // NOI18N
+
+        jCheckBox2.setText(org.openide.util.NbBundle.getMessage(BalanceGeneral.class, "BalanceGeneral.jCheckBox2.text")); // NOI18N
+
+        jCheckBox3.setText(org.openide.util.NbBundle.getMessage(BalanceGeneral.class, "BalanceGeneral.jCheckBox3.text")); // NOI18N
+
+        jCheckBox4.setText(org.openide.util.NbBundle.getMessage(BalanceGeneral.class, "BalanceGeneral.jCheckBox4.text")); // NOI18N
+
+        jLabel3.setText(org.openide.util.NbBundle.getMessage(BalanceGeneral.class, "BalanceGeneral.jLabel3.text")); // NOI18N
+
+        jCheckBox5.setText(org.openide.util.NbBundle.getMessage(BalanceGeneral.class, "BalanceGeneral.jCheckBox5.text")); // NOI18N
+
+        jButton1.setText(org.openide.util.NbBundle.getMessage(BalanceGeneral.class, "BalanceGeneral.jButton1.text")); // NOI18N
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        jCheckBox6.setText(org.openide.util.NbBundle.getMessage(BalanceGeneral.class, "BalanceGeneral.jCheckBox6.text")); // NOI18N
+
+        jCheckBox7.setText(org.openide.util.NbBundle.getMessage(BalanceGeneral.class, "BalanceGeneral.jCheckBox7.text")); // NOI18N
+
+        jLabel4.setText(org.openide.util.NbBundle.getMessage(BalanceGeneral.class, "BalanceGeneral.jLabel4.text")); // NOI18N
+
+        jCheckBox8.setText(org.openide.util.NbBundle.getMessage(BalanceGeneral.class, "BalanceGeneral.jCheckBox8.text")); // NOI18N
+
+        jCheckBox9.setText(org.openide.util.NbBundle.getMessage(BalanceGeneral.class, "BalanceGeneral.jCheckBox9.text")); // NOI18N
+
+        jCheckBox10.setText(org.openide.util.NbBundle.getMessage(BalanceGeneral.class, "BalanceGeneral.jCheckBox10.text")); // NOI18N
+
+        jCheckBox11.setText(org.openide.util.NbBundle.getMessage(BalanceGeneral.class, "BalanceGeneral.jCheckBox11.text")); // NOI18N
+
+        jCheckBox12.setText(org.openide.util.NbBundle.getMessage(BalanceGeneral.class, "BalanceGeneral.jCheckBox12.text")); // NOI18N
+
+        jCheckBox13.setText(org.openide.util.NbBundle.getMessage(BalanceGeneral.class, "BalanceGeneral.jCheckBox13.text")); // NOI18N
+
+        jCheckBox14.setText(org.openide.util.NbBundle.getMessage(BalanceGeneral.class, "BalanceGeneral.jCheckBox14.text")); // NOI18N
+
+        jCheckBox15.setText(org.openide.util.NbBundle.getMessage(BalanceGeneral.class, "BalanceGeneral.jCheckBox15.text")); // NOI18N
+
+        jLabel8.setText(org.openide.util.NbBundle.getMessage(BalanceGeneral.class, "BalanceGeneral.jLabel8.text")); // NOI18N
+
+        jCheckBox16.setText(org.openide.util.NbBundle.getMessage(BalanceGeneral.class, "BalanceGeneral.jCheckBox16.text")); // NOI18N
+
+        jCheckBox17.setText(org.openide.util.NbBundle.getMessage(BalanceGeneral.class, "BalanceGeneral.jCheckBox17.text")); // NOI18N
+
+        javax.swing.GroupLayout jDialogBancosLayout = new javax.swing.GroupLayout(jDialogBancos.getContentPane());
+        jDialogBancos.getContentPane().setLayout(jDialogBancosLayout);
+        jDialogBancosLayout.setHorizontalGroup(
+            jDialogBancosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jDialogBancosLayout.createSequentialGroup()
+                .addGroup(jDialogBancosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jDialogBancosLayout.createSequentialGroup()
+                        .addGap(53, 53, 53)
+                        .addGroup(jDialogBancosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jCheckBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jCheckBox5, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jCheckBox3, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jDialogBancosLayout.createSequentialGroup()
+                        .addGap(35, 35, 35)
+                        .addGroup(jDialogBancosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jButton1)
+                            .addGroup(jDialogBancosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 483, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel2)
+                                .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 483, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel4)
+                                .addComponent(jSeparator4, javax.swing.GroupLayout.PREFERRED_SIZE, 483, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel8)
+                                .addGroup(jDialogBancosLayout.createSequentialGroup()
+                                    .addGap(12, 12, 12)
+                                    .addGroup(jDialogBancosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(jDialogBancosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jDialogBancosLayout.createSequentialGroup()
+                                                .addComponent(jCheckBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(68, 68, 68))
+                                            .addComponent(jCheckBox4, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jCheckBox6)
+                                            .addComponent(jCheckBox7))
+                                        .addComponent(jCheckBox12, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jCheckBox10)
+                                        .addComponent(jCheckBox11)
+                                        .addComponent(jCheckBox13)
+                                        .addComponent(jCheckBox14)
+                                        .addComponent(jCheckBox17)
+                                        .addComponent(jCheckBox8)
+                                        .addComponent(jCheckBox16)
+                                        .addComponent(jCheckBox9, javax.swing.GroupLayout.PREFERRED_SIZE, 241, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jCheckBox15, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE)))))))
+                .addContainerGap(41, Short.MAX_VALUE))
+            .addGroup(jDialogBancosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jDialogBancosLayout.createSequentialGroup()
+                    .addGap(35, 35, 35)
+                    .addGroup(jDialogBancosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jLabel3)
+                        .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 482, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addContainerGap(42, Short.MAX_VALUE)))
+        );
+        jDialogBancosLayout.setVerticalGroup(
+            jDialogBancosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jDialogBancosLayout.createSequentialGroup()
+                .addGap(66, 66, 66)
+                .addComponent(jCheckBox5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jCheckBox1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jCheckBox3)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jCheckBox4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jCheckBox2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jCheckBox6)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jCheckBox7)
+                .addGap(20, 20, 20)
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jCheckBox8)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jCheckBox12)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jCheckBox9)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jCheckBox10)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jCheckBox11)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jCheckBox15)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jCheckBox13)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jCheckBox14)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jCheckBox17)
+                .addGap(15, 15, 15)
+                .addComponent(jLabel8)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSeparator4, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jCheckBox16)
+                .addGap(24, 24, 24)
+                .addComponent(jButton1)
+                .addContainerGap(21, Short.MAX_VALUE))
+            .addGroup(jDialogBancosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jDialogBancosLayout.createSequentialGroup()
+                    .addGap(36, 36, 36)
+                    .addComponent(jLabel3)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(618, Short.MAX_VALUE)))
+        );
 
         jPanel5.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         on.solonumero(jTextField5);
@@ -249,8 +429,6 @@ public class BalanceGeneral extends javax.swing.JFrame {
             }
         });
 
-        jComboBox3.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Hasta", "con" }));
-
         jComboBox4.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Todos los Bancos", "Seleccionar Banco" }));
         jComboBox4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -259,6 +437,8 @@ public class BalanceGeneral extends javax.swing.JFrame {
         });
 
         jLabel7.setText(org.openide.util.NbBundle.getMessage(BalanceGeneral.class, "BalanceGeneral.jLabel7.text")); // NOI18N
+
+        jLabel9.setText(org.openide.util.NbBundle.getMessage(BalanceGeneral.class, "BalanceGeneral.jLabel9.text")); // NOI18N
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -272,20 +452,20 @@ public class BalanceGeneral extends javax.swing.JFrame {
                 .addGap(47, 47, 47)
                 .addComponent(jLabel6)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jTextField8, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jLabel9)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(48, 48, 48)
+                .addComponent(jTextField8, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(25, 25, 25)
                 .addComponent(jButton6)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton5)
-                .addContainerGap(220, Short.MAX_VALUE))
+                .addContainerGap(26, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -301,7 +481,7 @@ public class BalanceGeneral extends javax.swing.JFrame {
                         .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jTextField8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jLabel9))
                     .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jComboBox4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel7)))
@@ -323,78 +503,34 @@ public class BalanceGeneral extends javax.swing.JFrame {
 
         jPanel8.setBackground(new java.awt.Color(153, 0, 0));
 
-        jPanel9.setBackground(new java.awt.Color(255, 255, 255));
-
         jLabel1.setBackground(new java.awt.Color(255, 255, 255));
         jLabel1.setFont(new java.awt.Font("Futura Bk BT", 1, 24)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(153, 0, 0));
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText(org.openide.util.NbBundle.getMessage(BalanceGeneral.class, "BalanceGeneral.jLabel1.text")); // NOI18N
-
-        javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
-        jPanel9.setLayout(jPanel9Layout);
-        jPanel9Layout.setHorizontalGroup(
-            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel9Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        jPanel9Layout.setVerticalGroup(
-            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
-        );
-
-        jLabel5.setBackground(new java.awt.Color(255, 255, 255));
-        jLabel5.setFont(new java.awt.Font("Futura Bk BT", 1, 24)); // NOI18N
-        jLabel5.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel5.setText(org.openide.util.NbBundle.getMessage(BalanceGeneral.class, "BalanceGeneral.jLabel5.text")); // NOI18N
-        jLabel5.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabel5MouseClicked(evt);
-            }
-        });
-
-        jLabel14.setBackground(new java.awt.Color(255, 255, 255));
-        jLabel14.setFont(new java.awt.Font("Futura Bk BT", 1, 24)); // NOI18N
-        jLabel14.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel14.setText(org.openide.util.NbBundle.getMessage(BalanceGeneral.class, "BalanceGeneral.jLabel14.text")); // NOI18N
-        jLabel14.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabel14MouseClicked(evt);
-            }
-        });
 
         javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
         jPanel8.setLayout(jPanel8Layout);
         jPanel8Layout.setHorizontalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel8Layout.createSequentialGroup()
-                .addGap(35, 35, 35)
-                .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(35, 35, 35)
-                .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(35, 35, 35)
-                .addComponent(jLabel14, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(369, 369, 369))
+                .addGap(25, 25, 25)
+                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 295, Short.MAX_VALUE)
+                .addGap(727, 727, 727))
         );
         jPanel8Layout.setVerticalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGroup(jPanel8Layout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel14))
-                .addContainerGap())
+                .addComponent(jLabel1)
+                .addGap(20, 20, 20))
         );
 
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
         jPanel7Layout.setHorizontalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel8, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 1235, Short.MAX_VALUE)
             .addGroup(jPanel7Layout.createSequentialGroup()
-                .addGap(35, 35, 35)
+                .addGap(25, 25, 25)
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel7Layout.createSequentialGroup()
@@ -402,6 +538,9 @@ public class BalanceGeneral extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jScrollPane1)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(jPanel7Layout.createSequentialGroup()
+                .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -420,7 +559,9 @@ public class BalanceGeneral extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -431,73 +572,34 @@ public class BalanceGeneral extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        // TODO add your handling code here:
-        //        ControladorReporte CR = new ControladorReporte();
-        //            ModeloBanco mb = new ModeloBanco();
-        //            mb.setCuenta(String.valueOf(jComboBox2.getItemAt(1)));
-        //            mb.setIdcuenta(1);
-        //            this.querybuscar(mb);
-        //            System.out.print(mb.getQueryreport());
-        if (jTable1.getRowCount() <= 0) {
-            control.mensaje_error("Tabla Vacia");
+        // Reporte
+        int[] cuenta = jListBalanceGral.getSelectedIndices();
+        if (cuenta.length == 0) {
+            control.mensaje_error("No ha seleccionado ninguna Cuenta!!");
             return;
         }
-        String directorio_actual = System.getProperty("user.dir");
-        String separador = System.getProperty("file.separator");
-        String ruta1 = directorio_actual + separador + "Reportes" + separador + "Report1.pdf";
-        String ruta2 = directorio_actual + separador + "Reportes" + separador + "Report2.pdf";
-        String ruta3 = directorio_actual + separador + "Reportes" + separador + "Report3.pdf";
 
-        try {
-            int[] cuenta = jListBalanceGral.getSelectedIndices();
-            //String[] descripcion = (String[]) jListBalanceGral.getSelectedValues();
-            for (int i = 0; i < cuenta.length; i++) {
-                ControladorReporte CR = new ControladorReporte();
-                ModeloBanco mb = new ModeloBanco();
+        ModeloReport mr = new ModeloReport();
+        ModeloBanco mb = new ModeloBanco();
 
-                //mb.setIdcuenta(i + 1);
-                mb.setIdcuenta(cuenta[i] + 1);
-                CB.descripcionCuenta(mb);
-                this.querybuscar(mb);
-                mb.setQueryreport(mb.getIdcuenta()+mb.getQueryreport());
-
-                if (i == 1) {
-                    mb.setNombrepdf("Report2.pdf");
-                } else {
-                    mb.setNombrepdf("Report1.pdf");
-                }
-
-                if (jComboBox3.getSelectedIndex() == 0) {
-                    CR.ejecutarReporte_deposito("pruebaquery.jasper", mb);
-                    System.out.println("\n\nQueryReport:"+mb.getQueryreport() + "idcuentaBal"+mb.getIdcuenta());
-                } else {
-
-                }
-
-                if(i==1){
-                    pdf.MergePDF(ruta1, ruta2, ruta3);
-                } else {
-                    if (i > 1) {
-                        File fichero = new File(ruta2);
-                        fichero.delete();
-                        File r1 = new File(ruta1);
-                        File r2 = new File(ruta2);
-                        File r3 = new File(ruta3);
-                        r1.renameTo(r2);
-                        r3.renameTo(r1);
-                        pdf.MergePDF(ruta1, ruta2, ruta3);
-                    }
-                }
-            }
-            if(cuenta.length==1){
-                pdf.openPDF(ruta1);
-            }else{
-                pdf.openPDF(ruta3);
-            }
-
-        }catch(Exception ex){
-            control.mensaje_error(ex.getMessage());
+        String[] titulos = new String[cuenta.length];
+        //carga los titulos
+        for (int i = 0; i < cuenta.length; i++) {
+            mb.setIdcuenta(cuenta[i] + 1);
+            CB.descripcionCuenta(mb);
+            titulos[i] = mb.getCuenta();
+            System.out.print("IDcuenta:" + mb.getIdcuenta() + " titulo:" + titulos[i]);
         }
+        this.querybuscar(mb);
+        //  mb.setQueryreport(mb.getIdcuenta() + mb.getQueryreport());
+
+        mr.setQuery(mb.getQueryreport());
+        mr.setNombreJasper("pruebaquery.jasper");
+        mr.setCuenta(cuenta);
+        mr.setTitulos(titulos);
+
+        ControladorReporte CR = new ControladorReporte();
+        CR.imprimirReporte(mr, mb);
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
@@ -507,12 +609,8 @@ public class BalanceGeneral extends javax.swing.JFrame {
         load.limpiar(jTable1);
         this.querybuscar(mb);
         for (int i = 0; i < cuenta.length; i++) {
-            mb.setIdcuenta(cuenta[i]+1);
-            if (jComboBox3.getSelectedIndex() == 0) {
-                CB.cuentabalance(mb, jTable1);
-            } else {
-                CB.balanceMes_Mes(mb, jTable1);
-            }
+            mb.setIdcuenta(cuenta[i] + 1);
+            CB.cuentabalance(mb, jTable1);
             //System.out.println("Cuentaid:"+mb.getIdcuenta());
         }
         load.poner_puntos_concoma(jTable1, 3);
@@ -548,19 +646,14 @@ public class BalanceGeneral extends javax.swing.JFrame {
     private void jComboBox4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox4ActionPerformed
         // TODO add your handling code here:
         if (jComboBox4.getSelectedIndex() == 1) {
-//            VerjDialog(jDialogBancos, 560, 700);
+            VerjDialog(jDialogBancos, 560, 700);
         }
     }//GEN-LAST:event_jComboBox4ActionPerformed
 
-    private void jLabel5MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MouseClicked
-        // TODO add your handling code here:
-//        VerjDialog(jDialogResultado, 700, 550);
-    }//GEN-LAST:event_jLabel5MouseClicked
-
-    private void jLabel14MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel14MouseClicked
-        // MouseClick Informacion Adicional
-//        VerjDialog(jDialogInformacionAd, 1200,700);
-    }//GEN-LAST:event_jLabel14MouseClicked
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // BT ok seleccionar Bancos
+        jDialogBancos.setVisible(false);
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -598,22 +691,46 @@ public class BalanceGeneral extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
-    private javax.swing.JComboBox jComboBox3;
+    private javax.swing.JCheckBox jCheckBox1;
+    private javax.swing.JCheckBox jCheckBox10;
+    private javax.swing.JCheckBox jCheckBox11;
+    private javax.swing.JCheckBox jCheckBox12;
+    private javax.swing.JCheckBox jCheckBox13;
+    private javax.swing.JCheckBox jCheckBox14;
+    private javax.swing.JCheckBox jCheckBox15;
+    private javax.swing.JCheckBox jCheckBox16;
+    private javax.swing.JCheckBox jCheckBox17;
+    private javax.swing.JCheckBox jCheckBox2;
+    private javax.swing.JCheckBox jCheckBox3;
+    private javax.swing.JCheckBox jCheckBox4;
+    private javax.swing.JCheckBox jCheckBox5;
+    private javax.swing.JCheckBox jCheckBox6;
+    private javax.swing.JCheckBox jCheckBox7;
+    private javax.swing.JCheckBox jCheckBox8;
+    private javax.swing.JCheckBox jCheckBox9;
     private javax.swing.JComboBox jComboBox4;
+    private javax.swing.JDialog jDialogBancos;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel14;
-    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JList jListBalanceGral;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
-    private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JSeparator jSeparator3;
+    private javax.swing.JSeparator jSeparator4;
     private javax.swing.JTable jTable1;
     private javax.swing.JTextField jTextField5;
     private javax.swing.JTextField jTextField6;

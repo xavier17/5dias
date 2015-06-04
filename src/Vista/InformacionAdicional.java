@@ -13,6 +13,7 @@ import Conexion.ObtenerNumero;
 import Controlador.ControladorBanco;
 import Controlador.ControladorReporte;
 import Modelo.ModeloBanco;
+import Modelo.ModeloReport;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.Date;
@@ -33,6 +34,7 @@ public class InformacionAdicional extends javax.swing.JFrame {
         load.LlenarList(jListCuentaInformacion, "SELECT descripcion FROM cuenta_informacion;");
         //load.LlenarList(jListBalanceGral, "SELECT descripcion FROM diasticocuenta_balance;");
     }
+
     Cargar load = new Cargar();
     ObtenerNumero on = new ObtenerNumero();
     ObtenerFecha of = new ObtenerFecha();
@@ -207,6 +209,8 @@ public class InformacionAdicional extends javax.swing.JFrame {
         jTable4 = new javax.swing.JTable();
         jPanel15 = new javax.swing.JPanel();
         jLabel18 = new javax.swing.JLabel();
+
+        jDialogBancos.setTitle(org.openide.util.NbBundle.getMessage(InformacionAdicional.class, "InformacionAdicional.jDialogBancos.title")); // NOI18N
 
         jLabel2.setText(org.openide.util.NbBundle.getMessage(InformacionAdicional.class, "InformacionAdicional.jLabel2.text")); // NOI18N
 
@@ -569,61 +573,31 @@ public class InformacionAdicional extends javax.swing.JFrame {
 
     private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
         // jButon Reporte
-        if (jTable4.getRowCount() <= 0) {
-            control.mensaje_error("Tabla Vacia");
+        int[] cuenta = jListCuentaInformacion.getSelectedIndices();
+        if (cuenta.length == 0) {
+            control.mensaje_error("No ha seleccionado ninguna Cuenta!!");
             return;
         }
-        String directorio_actual = System.getProperty("user.dir");
-        String separador = System.getProperty("file.separator");
-        String ruta1 = directorio_actual + separador + "Reportes" + separador + "Report1.pdf";
-        String ruta2 = directorio_actual + separador + "Reportes" + separador + "Report2.pdf";
-        String ruta3 = directorio_actual + separador + "Reportes" + separador + "Report3.pdf";
 
-        try {
-            int[] cuenta = jListCuentaInformacion.getSelectedIndices();
-            //String[] descripcion = (String[]) jListBalanceGral.getSelectedValues();
-            for (int i = 0; i < cuenta.length; i++) {
-                ControladorReporte CR = new ControladorReporte();
-                ModeloBanco mb = new ModeloBanco();
+        ModeloReport mr = new ModeloReport();
+        ModeloBanco mb = new ModeloBanco();
 
-                mb.setIdcuenta(cuenta[i] + 1);
-                CB.descripcionInforma(mb);
-                this.querybuscar(mb);
-                mb.setQueryreport(mb.getIdcuenta() + mb.getQueryreport());
-
-                if (i == 1) {
-                    mb.setNombrepdf("Report2.pdf");
-                } else {
-                    mb.setNombrepdf("Report1.pdf");
-                }
-
-                CR.ejecutarReporte_deposito("informacionAdicional.jasper", mb);
-                System.out.println("\n\nQueryReport:" + mb.getQueryreport() + "idcuentaInf" + mb.getIdcuenta());
-
-                if (i == 1) {
-                    pdf.MergePDF(ruta1, ruta2, ruta3);
-                } else {
-                    if (i > 1) {
-                        File fichero = new File(ruta2);
-                        fichero.delete();
-                        File r1 = new File(ruta1);
-                        File r2 = new File(ruta2);
-                        File r3 = new File(ruta3);
-                        r1.renameTo(r2);
-                        r3.renameTo(r1);
-                        pdf.MergePDF(ruta1, ruta2, ruta3);
-                    }
-                }
-            }
-            if (cuenta.length == 1) {
-                pdf.openPDF(ruta1);
-            } else {
-                pdf.openPDF(ruta3);
-            }
-
-        } catch (Exception ex) {
-            control.mensaje_error(ex.getMessage());
+        String[] titulos = new String[cuenta.length];
+        //carga los titulos
+        for (int i = 0; i < cuenta.length; i++) {
+            mb.setIdcuenta(cuenta[i] + 1);
+            CB.descripcionInforma(mb);
+            titulos[i] = mb.getCuenta();
+           // System.out.print("IDcuenta:" + mb.getIdcuenta() + " titulo:" + titulos[i]);
         }
+        this.querybuscar(mb);
+        mr.setQuery(mb.getQueryreport());
+        mr.setNombreJasper("informacionAdicional.jasper");
+        mr.setCuenta(cuenta);
+        mr.setTitulos(titulos);
+
+        ControladorReporte CR = new ControladorReporte();
+        CR.imprimirReporte(mr, mb);
     }//GEN-LAST:event_jButton9ActionPerformed
 
     private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton10ActionPerformed
