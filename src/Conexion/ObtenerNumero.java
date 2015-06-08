@@ -20,7 +20,6 @@ public class ObtenerNumero {
     public String getNumero(int f1) {
 
         //   int f1 = 1234567;
-
         Locale locFR = new Locale("fr");    // Francia
 
         NumberFormat[] nfa = new NumberFormat[4];
@@ -99,10 +98,19 @@ public class ObtenerNumero {
                 if (!(Character.isDigit(c)
                         || (c == KeyEvent.VK_BACK_SPACE)
                         || (c == KeyEvent.VK_DELETE))) {
-                  //  getToolkit().beep();
+                    //  getToolkit().beep();
                     e.consume();
                 }
             }
         });
+    }
+
+    public boolean esDecimal(String cad) {
+        try {
+            Double.parseDouble(cad);
+            return true;
+        } catch (NumberFormatException nfe) {
+            return false;
+        }
     }
 }

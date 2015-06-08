@@ -583,62 +583,65 @@ public class CuentaResultado extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        // TODO add your handling code here:
-
-        if (jTable1.getRowCount() <= 0) {
-            control.mensaje_error("Tabla Vacia");
-            return;
-        }
-        String directorio_actual = System.getProperty("user.dir");
-        String separador = System.getProperty("file.separator");
-        String ruta1 = directorio_actual + separador + "Reportes" + separador + "Report1.pdf";
-        String ruta2 = directorio_actual + separador + "Reportes" + separador + "Report2.pdf";
-        String ruta3 = directorio_actual + separador + "Reportes" + separador + "Report3.pdf";
-
-        try {
-            ControladorReporte CR = new ControladorReporte();
-            int[] cuenta = jListCuenResul.getSelectedIndices();
-            //String[] descripcion = (String[]) jListBalanceGral.getSelectedValues();
-            for (int i = 0; i < cuenta.length; i++) {
-                ModeloBanco mb = new ModeloBanco();
-                mb.setIdcuenta(cuenta[i] + 1);
-                CB.descripcionCuenta(mb);
-                this.querybuscar(mb);
-                mb.setQueryreport(mb.getIdcuenta() + mb.getQueryreport());
-
-                if (i == 1) {
-                    mb.setNombrepdf("Report2.pdf");
-                } else {
-                    mb.setNombrepdf("Report1.pdf");
-                }
-
-//                CR.ejecutarReporte_deposito("pruebaquery.jasper", mb);
-                System.out.println("\n\nQueryReport:" + mb.getQueryreport() + "idcuentaBal" + mb.getIdcuenta());
-
-                if (i == 1) {
-                    pdf.MergePDF(ruta1, ruta2, ruta3);
-                } else {
-                    if (i > 1) {
-                        File fichero = new File(ruta2);
-                        fichero.delete();
-                        File r1 = new File(ruta1);
-                        File r2 = new File(ruta2);
-                        File r3 = new File(ruta3);
-                        r1.renameTo(r2);
-                        r3.renameTo(r1);
-                        pdf.MergePDF(ruta1, ruta2, ruta3);
-                    }
-                }
-            }
-            if (cuenta.length == 1) {
-                pdf.openPDF(ruta1);
-            } else {
-                pdf.openPDF(ruta3);
-            }
-
-        } catch (Exception ex) {
-            control.mensaje_error(ex.getMessage());
-        }
+        // Busqueda Cuenta Resultado
+        ModeloBanco mb = new ModeloBanco();
+        
+        
+        
+//        if (jTable1.getRowCount() <= 0) {
+//            control.mensaje_error("Tabla Vacia");
+//            return;
+//        }
+//        String directorio_actual = System.getProperty("user.dir");
+//        String separador = System.getProperty("file.separator");
+//        String ruta1 = directorio_actual + separador + "Reportes" + separador + "Report1.pdf";
+//        String ruta2 = directorio_actual + separador + "Reportes" + separador + "Report2.pdf";
+//        String ruta3 = directorio_actual + separador + "Reportes" + separador + "Report3.pdf";
+//
+//        try {
+//            ControladorReporte CR = new ControladorReporte();
+//            int[] cuenta = jListCuenResul.getSelectedIndices();
+//            //String[] descripcion = (String[]) jListBalanceGral.getSelectedValues();
+//            for (int i = 0; i < cuenta.length; i++) {
+//                ModeloBanco mb = new ModeloBanco();
+//                mb.setIdcuenta(cuenta[i] + 1);
+//                CB.descripcionCuenta(mb);
+//                this.querybuscar(mb);
+//                mb.setQueryreport(mb.getIdcuenta() + mb.getQueryreport());
+//
+//                if (i == 1) {
+//                    mb.setNombrepdf("Report2.pdf");
+//                } else {
+//                    mb.setNombrepdf("Report1.pdf");
+//                }
+//
+////                CR.ejecutarReporte_deposito("pruebaquery.jasper", mb);
+//                System.out.println("\n\nQueryReport:" + mb.getQueryreport() + "idcuentaBal" + mb.getIdcuenta());
+//
+//                if (i == 1) {
+//                    pdf.MergePDF(ruta1, ruta2, ruta3);
+//                } else {
+//                    if (i > 1) {
+//                        File fichero = new File(ruta2);
+//                        fichero.delete();
+//                        File r1 = new File(ruta1);
+//                        File r2 = new File(ruta2);
+//                        File r3 = new File(ruta3);
+//                        r1.renameTo(r2);
+//                        r3.renameTo(r1);
+//                        pdf.MergePDF(ruta1, ruta2, ruta3);
+//                    }
+//                }
+//            }
+//            if (cuenta.length == 1) {
+//                pdf.openPDF(ruta1);
+//            } else {
+//                pdf.openPDF(ruta3);
+//            }
+//
+//        } catch (Exception ex) {
+//            control.mensaje_error(ex.getMessage());
+//        }
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
@@ -655,7 +658,7 @@ public class CuentaResultado extends javax.swing.JFrame {
             }
             //System.out.println("Cuentaid:"+mb.getIdcuenta());
         }
-
+        
         if (jComboBox4.getSelectedIndex() == 0) {
             CB.variacion(jTable1);
             load.poner_puntos(jTable1, 1);
@@ -665,7 +668,6 @@ public class CuentaResultado extends javax.swing.JFrame {
             String col[] = {"Cuenta", mb.getNombremes1() + "-" + mb.getPer1(), mb.getNombremes2() + "-" + mb.getPer2(), "Variacion"};
             load.nombreCol(jTable1, col);
         }
-
         // load.poner_puntos_concoma(jTable1, 3);
     }//GEN-LAST:event_jButton6ActionPerformed
 

@@ -73,8 +73,9 @@ public class ControladorBanco {
             pstmt.setInt(6, MB.getIdcuenta());
             pstmt.setInt(7, MB.getIdcuenta());
             ResultSet rs = pstmt.executeQuery();
+            System.out.println(pstmt.toString());
             jTable1 = load.cargar_corrido(jTable1, rs);
-            
+
 //            load.poner_puntos_concoma(jTable1, 2);
 //            load.poner_puntos_concoma(jTable1, 3);
 //            this.comparativo(jTable1);
@@ -126,13 +127,15 @@ public class ControladorBanco {
             tabla.setValueAt(resultado, x, 4);
         }
     }
-    
-     public void variacion(JTable tabla) {
+
+    public void variacion(JTable tabla) {
 //        //valores en un arreglo con nombres de personas
         int cant_datos = tabla.getRowCount();
         //creo un modelo para manejar la jTable
         DefaultTableModel model = (DefaultTableModel) tabla.getModel();
         model.addColumn("Variacion");
+        String resultado;
+        DecimalFormat twoDForm = new DecimalFormat("#");
 
         //Agrego las filas recorriendo el arreglo valores
         for (int x = 0; x < cant_datos; x++) {
@@ -140,10 +143,14 @@ public class ControladorBanco {
             String mes2 = (String) tabla.getValueAt(x, 2);
             double mesuno = Double.valueOf(mes1);
             double mesdos = Double.valueOf(mes2);
-            double resul = (mesdos/mesuno-1)*100;
-            DecimalFormat twoDForm = new DecimalFormat("#");
-            //System.out.println("resul"+resul);
-            String resultado = twoDForm.format(resul)+"%";
+            double resul = (mesdos / mesuno - 1) * 100;
+            System.out.println("resul" + resul);
+           // resultado = Double.toString(resul) ;
+            // if (on.esDecimal(resultado)) {
+            resultado = twoDForm.format(resul) + "%";
+           // } else {
+            //    resultado ="0%";
+            // }
             tabla.setValueAt(resultado, x, 3);
         }
     }
