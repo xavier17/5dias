@@ -8,20 +8,30 @@ package Vista;
 import Conexion.Cargar;
 import Conexion.Control;
 import Conexion.ExportExcel;
+import Conexion.ExporterXLS;
 import Conexion.MergePDF;
 import Conexion.ObtenerFecha;
 import Conexion.ObtenerNumero;
 import Controlador.ControladorBanco;
+import Controlador.ControladorCuenResul;
 import Controlador.ControladorReporte;
 import Modelo.ModeloBanco;
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import org.openide.util.Exceptions;
 
 /**
  *
@@ -41,8 +51,11 @@ public class CuentaResultado extends javax.swing.JFrame {
     ObtenerNumero on = new ObtenerNumero();
     ObtenerFecha of = new ObtenerFecha();
     ControladorBanco CB = new ControladorBanco();
+    ControladorCuenResul CR = new ControladorCuenResul();
     Control control = new Control();
     MergePDF pdf = new MergePDF();
+    Image icon = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/images/5diasLogo.png"));
+ 
 
     public void desde_hasta(ModeloBanco MB) {
         try {
@@ -145,16 +158,18 @@ public class CuentaResultado extends javax.swing.JFrame {
             }
         }
 
-        MB.setQuery("SELECT e.alias, c.descripcion, concat(LEFT(m.nombremes,3),'-', i.periodo) as Periodo, i.cantidad\n"
-                + "FROM 5dias.informacion_adicional i, 5dias.cuenta_informacion c, 5dias.entidades e,  5dias.meses m\n"
-                + "where i.idcuenta_informacion=c.idcuenta_informacion\n"
-                + "and i.identidades=e.identidades and i.mes=m.codmes\n"
-                + "and i.idcuenta_informacion=?\n"
-                + "and i.fecha between '" + MB.getDesde() + "' and '" + MB.getHasta() + "'\n"
+        MB.setQuery("SELECT e.alias, c.descripcion,\n"
+                + MB.getQueryreport()
+                + "\nFROM 5dias.estado_ganancia_perdidas b\n"
+                + "INNER JOIN 5dias.entidades e\n"
+                + "ON b.identidades=e.identidades\n"
+                + "INNER JOIN 5dias.cuenta_estado c\n"
+                + "ON  b.idcuenta_estado=c.idcuenta_estado\n"
+                + "WHERE b.idcuenta_estado=" + MB.getIdcuenta() + "\n"
                 + inbanco
-                + " order by i.fecha, e.alias");
-        MB.setQueryreport(MB.getQuery().substring(326));
-
+                + "GROUP BY e.denominacion\n"
+                + "ORDER BY e.identidades");
+//        System.out.println("\n\n" + MB.getQuery());
     }
 
     /**
@@ -206,6 +221,7 @@ public class CuentaResultado extends javax.swing.JFrame {
         jLabel7 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         jButton7 = new javax.swing.JButton();
+        jButton8 = new javax.swing.JButton();
         jScrollPane4 = new javax.swing.JScrollPane();
         jListCuenResul = new javax.swing.JList();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -377,6 +393,9 @@ public class CuentaResultado extends javax.swing.JFrame {
                     .addContainerGap(618, Short.MAX_VALUE)))
         );
 
+        setTitle(org.openide.util.NbBundle.getMessage(CuentaResultado.class, "CuentaResultado.title")); // NOI18N
+        setIconImage(icon);
+
         jPanel5.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         on.solonumero(jTextField5);
         on.solonumero(jTextField6);
@@ -450,6 +469,13 @@ public class CuentaResultado extends javax.swing.JFrame {
             }
         });
 
+        jButton8.setText(org.openide.util.NbBundle.getMessage(CuentaResultado.class, "CuentaResultado.jButton8.text")); // NOI18N
+        jButton8.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton8ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
@@ -477,7 +503,9 @@ public class CuentaResultado extends javax.swing.JFrame {
                 .addComponent(jButton5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton7)
-                .addContainerGap(50, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton8)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -487,7 +515,8 @@ public class CuentaResultado extends javax.swing.JFrame {
                     .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jButton5)
                         .addComponent(jButton6)
-                        .addComponent(jButton7))
+                        .addComponent(jButton7)
+                        .addComponent(jButton8))
                     .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel6)
                         .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -545,7 +574,7 @@ public class CuentaResultado extends javax.swing.JFrame {
             .addGroup(jPanel7Layout.createSequentialGroup()
                 .addGap(22, 22, 22)
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel7Layout.createSequentialGroup()
                         .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -570,9 +599,7 @@ public class CuentaResultado extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0))
+            .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -583,65 +610,42 @@ public class CuentaResultado extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+
         // Busqueda Cuenta Resultado
+        int[] cuenta = jListCuenResul.getSelectedIndices();
+        load.limpiar(jTable1);
+        if (cuenta.length == 0) {
+            control.mensaje_error("Debe seleccionar una cuenta");
+            return;
+        }
         ModeloBanco mb = new ModeloBanco();
-        
-        
-        
-//        if (jTable1.getRowCount() <= 0) {
-//            control.mensaje_error("Tabla Vacia");
-//            return;
-//        }
-//        String directorio_actual = System.getProperty("user.dir");
-//        String separador = System.getProperty("file.separator");
-//        String ruta1 = directorio_actual + separador + "Reportes" + separador + "Report1.pdf";
-//        String ruta2 = directorio_actual + separador + "Reportes" + separador + "Report2.pdf";
-//        String ruta3 = directorio_actual + separador + "Reportes" + separador + "Report3.pdf";
-//
-//        try {
-//            ControladorReporte CR = new ControladorReporte();
-//            int[] cuenta = jListCuenResul.getSelectedIndices();
-//            //String[] descripcion = (String[]) jListBalanceGral.getSelectedValues();
-//            for (int i = 0; i < cuenta.length; i++) {
-//                ModeloBanco mb = new ModeloBanco();
-//                mb.setIdcuenta(cuenta[i] + 1);
-//                CB.descripcionCuenta(mb);
-//                this.querybuscar(mb);
-//                mb.setQueryreport(mb.getIdcuenta() + mb.getQueryreport());
-//
-//                if (i == 1) {
-//                    mb.setNombrepdf("Report2.pdf");
-//                } else {
-//                    mb.setNombrepdf("Report1.pdf");
-//                }
-//
-////                CR.ejecutarReporte_deposito("pruebaquery.jasper", mb);
-//                System.out.println("\n\nQueryReport:" + mb.getQueryreport() + "idcuentaBal" + mb.getIdcuenta());
-//
-//                if (i == 1) {
-//                    pdf.MergePDF(ruta1, ruta2, ruta3);
-//                } else {
-//                    if (i > 1) {
-//                        File fichero = new File(ruta2);
-//                        fichero.delete();
-//                        File r1 = new File(ruta1);
-//                        File r2 = new File(ruta2);
-//                        File r3 = new File(ruta3);
-//                        r1.renameTo(r2);
-//                        r3.renameTo(r1);
-//                        pdf.MergePDF(ruta1, ruta2, ruta3);
-//                    }
-//                }
-//            }
-//            if (cuenta.length == 1) {
-//                pdf.openPDF(ruta1);
-//            } else {
-//                pdf.openPDF(ruta3);
-//            }
-//
-//        } catch (Exception ex) {
-//            control.mensaje_error(ex.getMessage());
-//        }
+        desde_hasta(mb);
+        //ArrayList<ModeloBanco> listaMeses = new ArrayList<ModeloBanco>();
+
+        try {
+            GregorianCalendar gcal = new GregorianCalendar();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM");
+            Date start = sdf.parse(mb.getPer1() + "." + mb.getMes1());
+            Date end = sdf.parse(mb.getPer2() + "." + mb.getMes2());
+            gcal.setTime(start);
+            mb.setIdcuenta(cuenta[0] + 1);
+            mb.setQueryreport("SUM(CASE WHEN  (b.mes) =" + mb.getMes1() + " AND periodo=" + mb.getPer1() + " AND b.idcuenta_estado=" + mb.getIdcuenta()
+                    + " THEN b.moneda_local+b.moneda_extranjera ELSE 0 END) as '" + mb.getNombremes1() + "'");
+            // int iterator = 0;
+            while (gcal.getTime().before(end)) {
+                gcal.add(Calendar.MONTH, 1);
+                Date d = gcal.getTime();
+                int mes = d.getMonth() + 1;
+                mb.setQueryreport(mb.getQueryreport() + ",\nSUM(CASE WHEN  (b.mes) =" + mes + " AND periodo=" + of.obtenerAnho(d) + " AND b.idcuenta_estado=" + mb.getIdcuenta()
+                        + " THEN b.moneda_local+b.moneda_extranjera ELSE 0 END) as '" + of.NombreMes(mes) + "'");
+            }
+            this.querybuscar(mb);
+            CR.cuentaResulDesdeHasta(mb, jTable1);
+            CR.ModJtable(jTable1);
+
+        } catch (ParseException ex) {
+            Exceptions.printStackTrace(ex);
+        }
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
@@ -654,13 +658,14 @@ public class CuentaResultado extends javax.swing.JFrame {
         for (int i = 0; i < cuenta.length; i++) {
             mb.setIdcuenta(cuenta[i] + 1);
             if (jComboBox4.getSelectedIndex() == 0) {
-                CB.cuentaResulSistema(mb, jTable1);
+                CR.cuentaResulSistema(mb, jTable1);
             }
             //System.out.println("Cuentaid:"+mb.getIdcuenta());
         }
-        
+
         if (jComboBox4.getSelectedIndex() == 0) {
-            CB.variacion(jTable1);
+            CR.variacion(jTable1);
+            jTable1.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
             load.poner_puntos(jTable1, 1);
             load.poner_puntos(jTable1, 2);
             int ancho[] = {200, 50, 50, 50,};
@@ -710,30 +715,11 @@ public class CuentaResultado extends javax.swing.JFrame {
     }//GEN-LAST:event_jComboBox4ActionPerformed
 
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
-        // BT export excel
-        if (jTable1.getRowCount() <= 0) {
-            control.mensaje_error("Tabla Vacia");
-            return;
-        }
-
-        JFileChooser dialog = new JFileChooser();
-        int opcion = dialog.showSaveDialog(this);
-
-        if (opcion == JFileChooser.APPROVE_OPTION) {
-            File dir = dialog.getSelectedFile();
-            String fl = dir.toString();
-
-            try {
-                List<JTable> tb = new ArrayList<JTable>();
-                tb.add(jTable1);
-                //-------------------
-                ExportExcel excelExporter = new ExportExcel(tb, new File(fl + ".xls"));
-                if (excelExporter.export()) {
-                    JOptionPane.showMessageDialog(null, "TABLAS EXPORTADOS CON EXITOS!");
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
+          // BT export excel
+          if (jTable1.getRowCount() > 0) {
+              CB.exportExcel(jTable1, "Cuenta Resultado");
+          }else{
+            control.mensaje_error("No hay datos para exportar");
         }
     }//GEN-LAST:event_jButton7ActionPerformed
 
@@ -741,6 +727,10 @@ public class CuentaResultado extends javax.swing.JFrame {
         // BT ok seleccionar Bancos
         jDialogBancos.setVisible(false);
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton8ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -782,6 +772,7 @@ public class CuentaResultado extends javax.swing.JFrame {
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
     private javax.swing.JButton jButton7;
+    private javax.swing.JButton jButton8;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JCheckBox jCheckBox10;
     private javax.swing.JCheckBox jCheckBox11;

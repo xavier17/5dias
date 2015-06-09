@@ -14,6 +14,8 @@ import Controlador.ControladorBanco;
 import Controlador.ControladorReporte;
 import Modelo.ModeloBanco;
 import Modelo.ModeloReport;
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.Date;
@@ -41,6 +43,7 @@ public class InformacionAdicional extends javax.swing.JFrame {
     ControladorBanco CB = new ControladorBanco();
     Control control = new Control();
     MergePDF pdf = new MergePDF();
+    Image icon = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/images/5diasLogo.png"));
 
     public void desde_hasta(ModeloBanco MB) {
         try {
@@ -193,7 +196,6 @@ public class InformacionAdicional extends javax.swing.JFrame {
         jCheckBox17 = new javax.swing.JCheckBox();
         jPanelInforAd1 = new javax.swing.JPanel();
         jPanel14 = new javax.swing.JPanel();
-        jButton9 = new javax.swing.JButton();
         jButton10 = new javax.swing.JButton();
         jLabel16 = new javax.swing.JLabel();
         jTextField15 = new javax.swing.JTextField();
@@ -203,6 +205,8 @@ public class InformacionAdicional extends javax.swing.JFrame {
         jComboBox8 = new javax.swing.JComboBox();
         jLabel17 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
+        jButton11 = new javax.swing.JButton();
+        jButton9 = new javax.swing.JButton();
         jScrollPane7 = new javax.swing.JScrollPane();
         jListCuentaInformacion = new javax.swing.JList();
         jScrollPane8 = new javax.swing.JScrollPane();
@@ -374,18 +378,14 @@ public class InformacionAdicional extends javax.swing.JFrame {
                     .addContainerGap(618, Short.MAX_VALUE)))
         );
 
+        setTitle(org.openide.util.NbBundle.getMessage(InformacionAdicional.class, "InformacionAdicional.title")); // NOI18N
+        setIconImage(icon);
+
         jPanel14.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         on.solonumero(jTextField15);
         on.solonumero(jTextField16);
         on.solonumero(jTextField17);
         on.solonumero(jTextField18);
-
-        jButton9.setText(org.openide.util.NbBundle.getMessage(InformacionAdicional.class, "InformacionAdicional.jButton9.text")); // NOI18N
-        jButton9.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton9ActionPerformed(evt);
-            }
-        });
 
         jButton10.setText(org.openide.util.NbBundle.getMessage(InformacionAdicional.class, "InformacionAdicional.jButton10.text")); // NOI18N
         jButton10.addActionListener(new java.awt.event.ActionListener() {
@@ -440,6 +440,20 @@ public class InformacionAdicional extends javax.swing.JFrame {
 
         jLabel1.setText(org.openide.util.NbBundle.getMessage(InformacionAdicional.class, "InformacionAdicional.jLabel1.text")); // NOI18N
 
+        jButton11.setText(org.openide.util.NbBundle.getMessage(InformacionAdicional.class, "InformacionAdicional.jButton11.text")); // NOI18N
+        jButton11.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton11ActionPerformed(evt);
+            }
+        });
+
+        jButton9.setText(org.openide.util.NbBundle.getMessage(InformacionAdicional.class, "InformacionAdicional.jButton9.text")); // NOI18N
+        jButton9.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton9ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel14Layout = new javax.swing.GroupLayout(jPanel14);
         jPanel14.setLayout(jPanel14Layout);
         jPanel14Layout.setHorizontalGroup(
@@ -464,8 +478,10 @@ public class InformacionAdicional extends javax.swing.JFrame {
                 .addGap(25, 25, 25)
                 .addComponent(jButton10)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton11)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton9)
-                .addContainerGap(26, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel14Layout.setVerticalGroup(
             jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -473,8 +489,9 @@ public class InformacionAdicional extends javax.swing.JFrame {
                 .addGap(15, 15, 15)
                 .addGroup(jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jButton9)
-                        .addComponent(jButton10))
+                        .addComponent(jButton10)
+                        .addComponent(jButton11)
+                        .addComponent(jButton9))
                     .addGroup(jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel16)
                         .addComponent(jTextField15, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -532,15 +549,15 @@ public class InformacionAdicional extends javax.swing.JFrame {
             .addGroup(jPanelInforAd1Layout.createSequentialGroup()
                 .addGap(25, 25, 25)
                 .addGroup(jPanelInforAd1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel14, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanelInforAd1Layout.createSequentialGroup()
                         .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane8)))
+                        .addComponent(jScrollPane8))
+                    .addComponent(jPanel14, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(jPanelInforAd1Layout.createSequentialGroup()
                 .addComponent(jPanel15, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addGap(0, 30, Short.MAX_VALUE))
         );
         jPanelInforAd1Layout.setVerticalGroup(
             jPanelInforAd1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -588,7 +605,7 @@ public class InformacionAdicional extends javax.swing.JFrame {
             mb.setIdcuenta(cuenta[i] + 1);
             CB.descripcionInforma(mb);
             titulos[i] = mb.getCuenta();
-           // System.out.print("IDcuenta:" + mb.getIdcuenta() + " titulo:" + titulos[i]);
+            // System.out.print("IDcuenta:" + mb.getIdcuenta() + " titulo:" + titulos[i]);
         }
         this.querybuscar(mb);
         mr.setQuery(mb.getQueryreport());
@@ -598,6 +615,7 @@ public class InformacionAdicional extends javax.swing.JFrame {
 
         ControladorReporte CR = new ControladorReporte();
         CR.imprimirReporte(mr, mb);
+        // CR.deleteReport();
     }//GEN-LAST:event_jButton9ActionPerformed
 
     private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton10ActionPerformed
@@ -605,6 +623,10 @@ public class InformacionAdicional extends javax.swing.JFrame {
         ModeloBanco mb = new ModeloBanco();
         int[] cuenta = jListCuentaInformacion.getSelectedIndices();
         load.limpiar(jTable4);
+        if (cuenta.length == 0) {
+            control.mensaje_error("Debe seleccionar una cuenta");
+            return;
+        }
         this.querybuscar(mb);
         for (int i = 0; i < cuenta.length; i++) {
             mb.setIdcuenta(cuenta[i] + 1);
@@ -657,6 +679,15 @@ public class InformacionAdicional extends javax.swing.JFrame {
         jDialogBancos.setVisible(false);
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void jButton11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton11ActionPerformed
+        // TODO add your handling code here:
+          if (jTable4.getRowCount() > 0) {
+              CB.exportExcel(jTable4, "Infor. Adicional");
+          }else{
+            control.mensaje_error("No hay datos para exportar");
+        }
+    }//GEN-LAST:event_jButton11ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -695,6 +726,7 @@ public class InformacionAdicional extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton10;
+    private javax.swing.JButton jButton11;
     private javax.swing.JButton jButton9;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JCheckBox jCheckBox10;

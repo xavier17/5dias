@@ -135,6 +135,7 @@ public class ControladorReporte {
             OutputStream output = new FileOutputStream(merge);
             pdf.concatPDFs(pdfs, output, true);
             pdf.openPDF(merge);
+            output.close();
             
         } catch (Exception e) {
             e.printStackTrace();
@@ -142,8 +143,9 @@ public class ControladorReporte {
         
     }
     
-    public void deleteReport(String directorio) {
+    public void deleteReport() {
         try {
+            String directorio = System.getProperty("user.dir")+"\\Reportes";
             System.out.print(directorio);
             File dir = new File(directorio);
             File[] files;

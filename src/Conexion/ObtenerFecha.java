@@ -26,17 +26,14 @@ public class ObtenerFecha {
     private static ResultSet rs = null;
 
     public String getFecha(Date fecha1) {
-
         // Date fecha1 = new Date();
         String fecha;
-
         String formato3 = new String("yyyy-MM-dd");
         SimpleDateFormat formatoSimple = new SimpleDateFormat(formato3);
         formatoSimple.applyPattern(formato3);
         fecha = formatoSimple.format(fecha1);
 
         return fecha;
-
     }
 
     public String date_to_String(Date fecha1) {
@@ -46,6 +43,12 @@ public class ObtenerFecha {
         formatoSimple.applyPattern(formato3);
         fecha = formatoSimple.format(fecha1);
         return fecha;
+    }
+
+    public int obtenerAnho(Date fecha) {
+        String formato = "yyyy";
+        SimpleDateFormat dateFormat = new SimpleDateFormat(formato);
+        return Integer.parseInt(dateFormat.format(fecha));
     }
 
     public Date Fechareturn(String fecha) {
