@@ -55,9 +55,8 @@ public class CuentaResultado extends javax.swing.JFrame {
     Control control = new Control();
     MergePDF pdf = new MergePDF();
     Image icon = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/images/5diasLogo.png"));
- 
 
-    public void desde_hasta(ModeloBanco MB) {
+    public boolean desde_hasta(ModeloBanco MB) {
         try {
             MB.setMes1(Integer.valueOf(jTextField5.getText()));
             MB.setPer1(Integer.valueOf(jTextField6.getText()));
@@ -75,8 +74,10 @@ public class CuentaResultado extends javax.swing.JFrame {
             //MB.setIdcuenta(jComboBox2.getSelectedIndex() + 1);
             MB.setDesde(of.de_String_a_java(desde));
             MB.setHasta(of.de_java_a_sql(hasta));
+            return true;
         } catch (Exception e) {
-            control.mensaje_error("Debe ingresar una fecha correcta");
+            e.printStackTrace();
+            return false;
         }
     }
 
@@ -146,27 +147,29 @@ public class CuentaResultado extends javax.swing.JFrame {
 //        }
     }
 
-    //arma el query de acuerdo a lo seleccionado
-    public void querybuscar(ModeloBanco MB) {
-        String inbanco = "";
-        this.desde_hasta(MB);
+    public void inBancos(ModeloBanco MB) {
         if (jComboBox4.getSelectedIndex() == 1) {
             this.impCheckSel(MB);
             if (MB.getINbancos() != null) {
                 MB.setINbancos(MB.getINbancos().substring(5));
-                inbanco = "and e.identidades IN(" + MB.getINbancos() + ")\n";
+                MB.setInBancoquery("and e.identidades IN(" + MB.getINbancos() + ")\n");
             }
+        } else {
+            MB.setInBancoquery("");
         }
+    }
 
+    //arma el query de acuerdo a lo seleccionado
+    public void querybuscar(ModeloBanco MB) {
         MB.setQuery("SELECT e.alias, c.descripcion,\n"
                 + MB.getQueryreport()
-                + "\nFROM 5dias.estado_ganancia_perdidas b\n"
-                + "INNER JOIN 5dias.entidades e\n"
+                + "\nFROM estado_ganancia_perdidas b\n"
+                + "INNER JOIN entidades e\n"
                 + "ON b.identidades=e.identidades\n"
-                + "INNER JOIN 5dias.cuenta_estado c\n"
+                + "INNER JOIN cuenta_estado c\n"
                 + "ON  b.idcuenta_estado=c.idcuenta_estado\n"
                 + "WHERE b.idcuenta_estado=" + MB.getIdcuenta() + "\n"
-                + inbanco
+                + MB.getInBancoquery()
                 + "GROUP BY e.denominacion\n"
                 + "ORDER BY e.identidades");
 //        System.out.println("\n\n" + MB.getQuery());
@@ -222,6 +225,7 @@ public class CuentaResultado extends javax.swing.JFrame {
         jLabel9 = new javax.swing.JLabel();
         jButton7 = new javax.swing.JButton();
         jButton8 = new javax.swing.JButton();
+        jButton9 = new javax.swing.JButton();
         jScrollPane4 = new javax.swing.JScrollPane();
         jListCuenResul = new javax.swing.JList();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -476,6 +480,13 @@ public class CuentaResultado extends javax.swing.JFrame {
             }
         });
 
+        jButton9.setText(org.openide.util.NbBundle.getMessage(CuentaResultado.class, "CuentaResultado.jButton9.text")); // NOI18N
+        jButton9.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton9ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
@@ -484,7 +495,7 @@ public class CuentaResultado extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(jLabel7)
                 .addGap(7, 7, 7)
-                .addComponent(jComboBox4, javax.swing.GroupLayout.PREFERRED_SIZE, 274, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jComboBox4, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel6)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -499,8 +510,10 @@ public class CuentaResultado extends javax.swing.JFrame {
                 .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jButton6)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jButton5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton9)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton7)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -510,11 +523,9 @@ public class CuentaResultado extends javax.swing.JFrame {
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
-                .addGap(15, 15, 15)
+                .addGap(14, 14, 14)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jButton5)
-                        .addComponent(jButton6)
                         .addComponent(jButton7)
                         .addComponent(jButton8))
                     .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -523,7 +534,10 @@ public class CuentaResultado extends javax.swing.JFrame {
                         .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jTextField8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel9))
+                        .addComponent(jLabel9)
+                        .addComponent(jButton6)
+                        .addComponent(jButton5)
+                        .addComponent(jButton9))
                     .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jComboBox4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel7)))
@@ -619,61 +633,96 @@ public class CuentaResultado extends javax.swing.JFrame {
             return;
         }
         ModeloBanco mb = new ModeloBanco();
-        desde_hasta(mb);
+        boolean date = desde_hasta(mb);
+        inBancos(mb);
         //ArrayList<ModeloBanco> listaMeses = new ArrayList<ModeloBanco>();
-
-        try {
-            GregorianCalendar gcal = new GregorianCalendar();
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM");
-            Date start = sdf.parse(mb.getPer1() + "." + mb.getMes1());
-            Date end = sdf.parse(mb.getPer2() + "." + mb.getMes2());
-            gcal.setTime(start);
-            mb.setIdcuenta(cuenta[0] + 1);
-            mb.setQueryreport("SUM(CASE WHEN  (b.mes) =" + mb.getMes1() + " AND periodo=" + mb.getPer1() + " AND b.idcuenta_estado=" + mb.getIdcuenta()
-                    + " THEN b.moneda_local+b.moneda_extranjera ELSE 0 END) as '" + mb.getNombremes1() + "'");
-            // int iterator = 0;
-            while (gcal.getTime().before(end)) {
-                gcal.add(Calendar.MONTH, 1);
-                Date d = gcal.getTime();
-                int mes = d.getMonth() + 1;
-                mb.setQueryreport(mb.getQueryreport() + ",\nSUM(CASE WHEN  (b.mes) =" + mes + " AND periodo=" + of.obtenerAnho(d) + " AND b.idcuenta_estado=" + mb.getIdcuenta()
-                        + " THEN b.moneda_local+b.moneda_extranjera ELSE 0 END) as '" + of.NombreMes(mes) + "'");
+        if (date) {
+            try {
+                for (int i = 0; i < cuenta.length; i++) {
+                    GregorianCalendar gcal = new GregorianCalendar();
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM");
+                    Date start = sdf.parse(mb.getPer1() + "." + mb.getMes1());
+                    Date end = sdf.parse(mb.getPer2() + "." + mb.getMes2());
+                    gcal.setTime(start);
+                    mb.setIdcuenta(cuenta[i] + 1);
+                    mb.setQueryreport("SUM(CASE WHEN  (b.mes) =" + mb.getMes1() + " AND periodo=" + mb.getPer1() + " AND b.idcuenta_estado=" + mb.getIdcuenta()
+                            + " THEN b.moneda_local+b.moneda_extranjera ELSE 0 END) as '" + mb.getNombremes1() + "'");
+                    // int iterator = 0;
+                    while (gcal.getTime().before(end)) {
+                        gcal.add(Calendar.MONTH, 1);
+                        Date d = gcal.getTime();
+                        int mes = d.getMonth() + 1;
+                        mb.setQueryreport(mb.getQueryreport() + ",\nSUM(CASE WHEN  (b.mes) =" + mes + " AND periodo=" + of.obtenerAnho(d) + " AND b.idcuenta_estado=" + mb.getIdcuenta()
+                                + " THEN b.moneda_local+b.moneda_extranjera ELSE 0 END) as '" + of.NombreMes(mes) + "'");
+                    }
+                    this.querybuscar(mb);
+                    CR.cuentaResulDesdeHasta(mb, jTable1);
+                    CR.ModJtable(jTable1);
+                }
+                //CR.restar(jTable1);
+            } catch (ParseException ex) {
+                Exceptions.printStackTrace(ex);
             }
-            this.querybuscar(mb);
-            CR.cuentaResulDesdeHasta(mb, jTable1);
-            CR.ModJtable(jTable1);
-
-        } catch (ParseException ex) {
-            Exceptions.printStackTrace(ex);
+        } else {
+            control.mensaje_error("Debe ingresar una fecha correcta");
         }
     }//GEN-LAST:event_jButton5ActionPerformed
 
+    @SuppressWarnings("empty-statement")
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
-        // BT bucar
+        // BT Variacion
         ModeloBanco mb = new ModeloBanco();
         int[] cuenta = jListCuenResul.getSelectedIndices();
-        desde_hasta(mb);
         load.limpiar(jTable1);
-        //this.querybuscar(mb);
-        for (int i = 0; i < cuenta.length; i++) {
-            mb.setIdcuenta(cuenta[i] + 1);
-            if (jComboBox4.getSelectedIndex() == 0) {
-                CR.cuentaResulSistema(mb, jTable1);
+        if (cuenta.length == 0) {
+            control.mensaje_error("Debe seleccionar una cuenta");
+            return;
+        }
+        boolean date = desde_hasta(mb);
+        inBancos(mb);
+        if (date) {
+            for (int i = 0; i < cuenta.length; i++) {
+                mb.setIdcuenta(cuenta[i] + 1);
+                if (jComboBox4.getSelectedIndex() == 0) {
+                    CR.cuentaResulSistema(mb, jTable1);
+                } else {
+                    mb.setQueryreport("SUM(CASE WHEN  (b.mes) =" + mb.getMes1() + " AND periodo=" + mb.getPer1() + " AND b.idcuenta_estado=" + mb.getIdcuenta()
+                            + " THEN b.moneda_local+b.moneda_extranjera ELSE 0 END) as '" + mb.getNombremes1() + "'"
+                            + ",SUM(CASE WHEN  (b.mes) =" + mb.getMes2() + " AND periodo=" + mb.getPer2() + " AND b.idcuenta_estado=" + mb.getIdcuenta()
+                            + " THEN b.moneda_local+b.moneda_extranjera ELSE 0 END) as '" + mb.getNombremes2() + "'");
+                    this.querybuscar(mb);
+                    CR.cuentaResulDesdeHasta(mb, jTable1);
+                }
             }
-            //System.out.println("Cuentaid:"+mb.getIdcuenta());
-        }
 
-        if (jComboBox4.getSelectedIndex() == 0) {
-            CR.variacion(jTable1);
-            jTable1.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-            load.poner_puntos(jTable1, 1);
-            load.poner_puntos(jTable1, 2);
-            int ancho[] = {200, 50, 50, 50,};
+            int[] ancho = null;
+            String col[] = null;
+            if (jComboBox4.getSelectedIndex() == 0) {
+                mb.setPosicionCol(1);
+                ancho = new int[4];
+                ancho[0]=200;ancho[1]=50;ancho[2]=50;ancho[3]=50;
+                col=new String[4];
+                col[0] ="Cuenta";
+                col[1] =mb.getNombremes1()+"-"+mb.getPer1();
+                col[2] =mb.getNombremes2()+"-"+mb.getPer2();
+                col[3] ="Variación";
+            } else {
+                mb.setPosicionCol(2);
+                ancho = new int[5];
+                ancho[0]=100;ancho[1]=200;ancho[2]=50;ancho[3]=50;ancho[4]=50;
+                col=new String[5];
+                col[0] ="Banco";
+                col[1] ="Cuenta";
+                col[2] =mb.getNombremes1()+"-"+mb.getPer1();
+                col[3] =mb.getNombremes2()+"-"+mb.getPer2();
+                col[4] ="Variación";
+            }
+            CR.variacion(jTable1, mb);
             load.ancho(jTable1, ancho);
-            String col[] = {"Cuenta", mb.getNombremes1() + "-" + mb.getPer1(), mb.getNombremes2() + "-" + mb.getPer2(), "Variacion"};
             load.nombreCol(jTable1, col);
+        } else {
+            control.mensaje_error("Debe ingresar una fecha correcta");
         }
-        // load.poner_puntos_concoma(jTable1, 3);
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void jButton6KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jButton6KeyReleased
@@ -715,10 +764,10 @@ public class CuentaResultado extends javax.swing.JFrame {
     }//GEN-LAST:event_jComboBox4ActionPerformed
 
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
-          // BT export excel
-          if (jTable1.getRowCount() > 0) {
-              CB.exportExcel(jTable1, "Cuenta Resultado");
-          }else{
+        // BT export excel
+        if (jTable1.getRowCount() > 0) {
+            CB.exportExcel(jTable1, "Cuenta Resultado");
+        } else {
             control.mensaje_error("No hay datos para exportar");
         }
     }//GEN-LAST:event_jButton7ActionPerformed
@@ -731,6 +780,17 @@ public class CuentaResultado extends javax.swing.JFrame {
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton8ActionPerformed
+
+    private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
+        // Restar
+        if (jTable1.getRowCount() <= 0) {
+            control.mensaje_error("La tabla esta vacía");
+            return;
+        }
+        CR.restar(jTable1);
+
+        
+    }//GEN-LAST:event_jButton9ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -773,6 +833,7 @@ public class CuentaResultado extends javax.swing.JFrame {
     private javax.swing.JButton jButton6;
     private javax.swing.JButton jButton7;
     private javax.swing.JButton jButton8;
+    private javax.swing.JButton jButton9;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JCheckBox jCheckBox10;
     private javax.swing.JCheckBox jCheckBox11;

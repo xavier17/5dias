@@ -45,7 +45,7 @@ public class InformacionAdicional extends javax.swing.JFrame {
     MergePDF pdf = new MergePDF();
     Image icon = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/images/5diasLogo.png"));
 
-    public void desde_hasta(ModeloBanco MB) {
+    public boolean desde_hasta(ModeloBanco MB) {
         try {
             MB.setMes1(Integer.valueOf(jTextField15.getText()));
             MB.setPer1(Integer.valueOf(jTextField16.getText()));
@@ -59,12 +59,11 @@ public class InformacionAdicional extends javax.swing.JFrame {
             int añohasta = Integer.valueOf(jTextField17.getText());
             String desde = añodesde + "-" + mesdesde + "-01";
             Date hasta = of.findemes(meshasta, añohasta);
-            //MB.setCuenta(String.valueOf(jComboBox2.getSelectedItem()));
-            //MB.setIdcuenta(jComboBox2.getSelectedIndex() + 1);
             MB.setDesde(of.de_String_a_java(desde));
             MB.setHasta(of.de_java_a_sql(hasta));
+            return true;
         } catch (Exception e) {
-            control.mensaje_error("Debe ingresar una fecha correcta");
+            return false;
         }
     }
 
@@ -126,18 +125,12 @@ public class InformacionAdicional extends javax.swing.JFrame {
                 MB.setINbancos(MB.getINbancos() + "," + MB.getArrCheck(i));
             }
         }
-
-//        if (MB.getINbancos() == null) {
-//            control.mensaje_error("Debe seleccionar un banco!");
-//        } else {
-//            MB.setINbancos(MB.getINbancos().substring(5));
-//        }
     }
 
     //arma el query de acuerdo a lo seleccionado
     public void querybuscar(ModeloBanco MB) {
         String inbanco = "";
-        this.desde_hasta(MB);
+        //this.desde_hasta(MB);
         if (jComboBox8.getSelectedIndex() == 1) {
             this.impCheckSel(MB);
             if (MB.getINbancos() != null) {
@@ -429,7 +422,7 @@ public class InformacionAdicional extends javax.swing.JFrame {
             }
         });
 
-        jComboBox8.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Todos los Bancos", "Seleccionar Banco" }));
+        jComboBox8.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Sistema", "Seleccionar Banco" }));
         jComboBox8.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jComboBox8ActionPerformed(evt);
@@ -557,7 +550,7 @@ public class InformacionAdicional extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(jPanelInforAd1Layout.createSequentialGroup()
                 .addComponent(jPanel15, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 30, Short.MAX_VALUE))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         jPanelInforAd1Layout.setVerticalGroup(
             jPanelInforAd1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -599,23 +592,28 @@ public class InformacionAdicional extends javax.swing.JFrame {
         ModeloReport mr = new ModeloReport();
         ModeloBanco mb = new ModeloBanco();
 
-        String[] titulos = new String[cuenta.length];
-        //carga los titulos
-        for (int i = 0; i < cuenta.length; i++) {
-            mb.setIdcuenta(cuenta[i] + 1);
-            CB.descripcionInforma(mb);
-            titulos[i] = mb.getCuenta();
-            // System.out.print("IDcuenta:" + mb.getIdcuenta() + " titulo:" + titulos[i]);
-        }
-        this.querybuscar(mb);
-        mr.setQuery(mb.getQueryreport());
-        mr.setNombreJasper("informacionAdicional.jasper");
-        mr.setCuenta(cuenta);
-        mr.setTitulos(titulos);
+        boolean date = desde_hasta(mb);
+        if (date) {
+            String[] titulos = new String[cuenta.length];
+            //carga los titulos
+            for (int i = 0; i < cuenta.length; i++) {
+                mb.setIdcuenta(cuenta[i] + 1);
+                CB.descripcionInforma(mb);
+                titulos[i] = mb.getCuenta();
+                // System.out.print("IDcuenta:" + mb.getIdcuenta() + " titulo:" + titulos[i]);
+            }
+            this.querybuscar(mb);
+            mr.setQuery(mb.getQueryreport());
+            mr.setNombreJasper("informacionAdicional.jasper");
+            mr.setCuenta(cuenta);
+            mr.setTitulos(titulos);
 
-        ControladorReporte CR = new ControladorReporte();
-        CR.imprimirReporte(mr, mb);
-        // CR.deleteReport();
+            ControladorReporte CR = new ControladorReporte();
+            CR.imprimirReporte(mr, mb);
+            // CR.deleteReport();
+        } else {
+            control.mensaje_error("Debe ingresar una fecha correcta");
+        }
     }//GEN-LAST:event_jButton9ActionPerformed
 
     private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton10ActionPerformed
@@ -627,13 +625,18 @@ public class InformacionAdicional extends javax.swing.JFrame {
             control.mensaje_error("Debe seleccionar una cuenta");
             return;
         }
-        this.querybuscar(mb);
-        for (int i = 0; i < cuenta.length; i++) {
-            mb.setIdcuenta(cuenta[i] + 1);
-            //System.out.println("Cuentaid:"+mb.getIdcuenta());
-            CB.cuentabalance(mb, jTable4);
+        boolean date = desde_hasta(mb);
+        if (date) {
+            this.querybuscar(mb);
+            for (int i = 0; i < cuenta.length; i++) {
+                mb.setIdcuenta(cuenta[i] + 1);
+                //System.out.println("Cuentaid:"+mb.getIdcuenta());
+                CB.cuentabalance(mb, jTable4);
+            }
+            load.poner_puntos_concoma(jTable4, 3);
+        } else {
+            control.mensaje_error("Debe ingresar una fecha correcta");
         }
-        load.poner_puntos_concoma(jTable4, 3);
     }//GEN-LAST:event_jButton10ActionPerformed
 
     private void jButton10KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jButton10KeyReleased
@@ -681,9 +684,9 @@ public class InformacionAdicional extends javax.swing.JFrame {
 
     private void jButton11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton11ActionPerformed
         // TODO add your handling code here:
-          if (jTable4.getRowCount() > 0) {
-              CB.exportExcel(jTable4, "Infor. Adicional");
-          }else{
+        if (jTable4.getRowCount() > 0) {
+            CB.exportExcel(jTable4, "Infor. Adicional");
+        } else {
             control.mensaje_error("No hay datos para exportar");
         }
     }//GEN-LAST:event_jButton11ActionPerformed

@@ -28,6 +28,8 @@ public class ModeloBanco {
     private String Query;
     private String queryreport;
     private String nombrepdf;
+    private String inBancoquery;
+    private int posicionCol;
     /**
      * @return the desde
      */
@@ -229,6 +231,34 @@ public class ModeloBanco {
      */
     public void setNombrepdf(String nombrepdf) {
         this.nombrepdf = nombrepdf;
+    }
+
+    /**
+     * @return the inBancoquery
+     */
+    public String getInBancoquery() {
+        return inBancoquery;
+    }
+
+    /**
+     * @param inBancoquery the inBancoquery to set
+     */
+    public void setInBancoquery(String inBancoquery) {
+        this.inBancoquery = inBancoquery;
+    }
+
+    /**
+     * @return the posicionCol
+     */
+    public int getPosicionCol() {
+        return posicionCol;
+    }
+
+    /**
+     * @param posicionCol the posicionCol to set
+     */
+    public void setPosicionCol(int posicionCol) {
+        this.posicionCol = posicionCol;
     }
 
 }

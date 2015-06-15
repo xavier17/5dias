@@ -44,7 +44,7 @@ public class BalanceGeneral extends javax.swing.JFrame {
     MergePDF pdf = new MergePDF();
     Image icon = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/images/5diasLogo.png"));
 
-    public void desde_hasta(ModeloBanco MB) {
+    public boolean desde_hasta(ModeloBanco MB) {
         try {
             MB.setMes1(Integer.valueOf(jTextField5.getText()));
             MB.setPer1(Integer.valueOf(jTextField6.getText()));
@@ -58,12 +58,12 @@ public class BalanceGeneral extends javax.swing.JFrame {
             int añohasta = Integer.valueOf(jTextField7.getText());
             String desde = añodesde + "-" + mesdesde + "-01";
             Date hasta = of.findemes(meshasta, añohasta);
-            //MB.setCuenta(String.valueOf(jComboBox2.getSelectedItem()));
-            //MB.setIdcuenta(jComboBox2.getSelectedIndex() + 1);
             MB.setDesde(of.de_String_a_java(desde));
             MB.setHasta(of.de_java_a_sql(hasta));
+            return true;
         } catch (Exception e) {
-            control.mensaje_error("Debe ingresar una fecha correcta");
+            e.printStackTrace();
+            return false;
         }
     }
 
@@ -126,7 +126,6 @@ public class BalanceGeneral extends javax.swing.JFrame {
     //arma el query de acuerdo a lo seleccionado
     public void querybuscar(ModeloBanco MB) {
         String inbanco = "";
-        this.desde_hasta(MB);
         if (jComboBox4.getSelectedIndex() == 1) {
             this.impCheckSel(MB);
             MB.setINbancos(MB.getINbancos().substring(5));
@@ -151,13 +150,6 @@ public class BalanceGeneral extends javax.swing.JFrame {
         ventana.setVisible(true);
     }
 
-//    public void ventana(JPanel tab) {
-//        tab.setSize(jTabbedPane1.getSize());
-//        jTabbedPane1.removeAll();
-//        jTabbedPane1.add(tab);
-//        jTabbedPane1.revalidate();
-//        jTabbedPane1.repaint();
-//    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -436,7 +428,7 @@ public class BalanceGeneral extends javax.swing.JFrame {
             }
         });
 
-        jComboBox4.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Todos los Bancos", "Seleccionar Banco" }));
+        jComboBox4.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Sistema", "Seleccionar Banco" }));
         jComboBox4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jComboBox4ActionPerformed(evt);
@@ -598,25 +590,31 @@ public class BalanceGeneral extends javax.swing.JFrame {
 
         ModeloReport mr = new ModeloReport();
         ModeloBanco mb = new ModeloBanco();
-
         String[] titulos = new String[cuenta.length];
-        //carga los titulos
-        for (int i = 0; i < cuenta.length; i++) {
-            mb.setIdcuenta(cuenta[i] + 1);
-            CB.descripcionCuenta(mb);
-            titulos[i] = mb.getCuenta();
-            System.out.print("IDcuenta:" + mb.getIdcuenta() + " titulo:" + titulos[i]);
+
+        boolean date = desde_hasta(mb);
+        if (date) {
+            //carga los titulos
+            for (int i = 0; i < cuenta.length; i++) {
+                mb.setIdcuenta(cuenta[i] + 1);
+                CB.descripcionCuenta(mb);
+                titulos[i] = mb.getCuenta();
+                System.out.print("IDcuenta:" + mb.getIdcuenta() + " titulo:" + titulos[i]);
+            }
+
+            this.querybuscar(mb);
+            //  mb.setQueryreport(mb.getIdcuenta() + mb.getQueryreport());
+
+            mr.setQuery(mb.getQueryreport());
+            mr.setNombreJasper("pruebaquery.jasper");
+            mr.setCuenta(cuenta);
+            mr.setTitulos(titulos);
+
+            ControladorReporte CR = new ControladorReporte();
+            CR.imprimirReporte(mr, mb);
+        } else {
+            control.mensaje_error("Debe ingresar una fecha correcta");
         }
-        this.querybuscar(mb);
-        //  mb.setQueryreport(mb.getIdcuenta() + mb.getQueryreport());
-
-        mr.setQuery(mb.getQueryreport());
-        mr.setNombreJasper("pruebaquery.jasper");
-        mr.setCuenta(cuenta);
-        mr.setTitulos(titulos);
-
-        ControladorReporte CR = new ControladorReporte();
-        CR.imprimirReporte(mr, mb);
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
@@ -628,14 +626,18 @@ public class BalanceGeneral extends javax.swing.JFrame {
             control.mensaje_error("Debe seleccionar una cuenta");
             return;
         }
-        
-        this.querybuscar(mb);
-        for (int i = 0; i < cuenta.length; i++) {
-            mb.setIdcuenta(cuenta[i] + 1);
-            CB.cuentabalance(mb, jTable1);
-            //System.out.println("Cuentaid:"+mb.getIdcuenta());
+        boolean date = desde_hasta(mb);
+        if (date) {
+            this.querybuscar(mb);
+            for (int i = 0; i < cuenta.length; i++) {
+                mb.setIdcuenta(cuenta[i] + 1);
+                CB.cuentabalance(mb, jTable1);
+                //System.out.println("Cuentaid:"+mb.getIdcuenta());
+            }
+            load.poner_puntos_concoma(jTable1, 3);
+        } else {
+            control.mensaje_error("Debe ingresar una fecha correcta");
         }
-        load.poner_puntos_concoma(jTable1, 3);
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void jButton6KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jButton6KeyReleased
@@ -679,9 +681,9 @@ public class BalanceGeneral extends javax.swing.JFrame {
 
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
         // TODO add your handling code here:
-         if (jTable1.getRowCount() > 0) {
-              CB.exportExcel(jTable1, "Balance Gral.");
-          }else{
+        if (jTable1.getRowCount() > 0) {
+            CB.exportExcel(jTable1, "Balance Gral.");
+        } else {
             control.mensaje_error("No hay datos para exportar");
         }
     }//GEN-LAST:event_jButton7ActionPerformed

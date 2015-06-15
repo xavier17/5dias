@@ -18,7 +18,9 @@ import java.sql.SQLException;
 import java.text.DecimalFormat;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
+import javax.swing.table.TableModel;
 
 /**
  *
@@ -76,7 +78,7 @@ public class ControladorCuenResul {
         }
     }
 
-    public void variacion(JTable tabla) {
+    public void variacion(JTable tabla, ModeloBanco mb) {
 //        //valores en un arreglo con nombres de personas
         int cant_datos = tabla.getRowCount();
         //creo un modelo para manejar la jTable
@@ -87,15 +89,20 @@ public class ControladorCuenResul {
 
         //Agrego las filas recorriendo el arreglo valores
         for (int x = 0; x < cant_datos; x++) {
-            String mes1 = (String) tabla.getValueAt(x, 1);
-            String mes2 = (String) tabla.getValueAt(x, 2);
+            String mes1 = (String) tabla.getValueAt(x, mb.getPosicionCol());
+            String mes2 = (String) tabla.getValueAt(x, mb.getPosicionCol() + 1);
             double mesuno = Double.valueOf(mes1);
             double mesdos = Double.valueOf(mes2);
             double resul = (mesdos / mesuno - 1) * 100;
             System.out.println("resul" + resul);
             resultado = twoDForm.format(resul) + "%";
-            tabla.setValueAt(resultado, x, 3);
+            tabla.setValueAt(resultado, x, mb.getPosicionCol() + 2);
         }
+
+        tabla.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        load.poner_puntos(tabla, mb.getPosicionCol());
+        load.poner_puntos(tabla, mb.getPosicionCol() + 1);
+
     }
 
     public void ModJtable(JTable tabla) {
@@ -103,6 +110,64 @@ public class ControladorCuenResul {
         TableColumnModel columnModel = tabla.getColumnModel();
         columnModel.getColumn(0).setPreferredWidth(100);
         columnModel.getColumn(1).setPreferredWidth(250);
+    }
+
+    public void restar(JTable tabla) {
+
+        TableModel model = tabla.getModel();
+        JTable tabla2 = new JTable(model);
+        //tabla.setModel(model);
+        for (int i = 0; i < tabla.getColumnCount()-1; i++) {
+            for (int j = 0; j < tabla.getRowCount(); j++) {
+                if (i < 2) {
+                    tabla2.setValueAt(tabla.getValueAt(j, i), j, i);
+                } else {
+                    if (tabla.getColumnName(i).toLowerCase().equals("enero")) {
+                        tabla2.setValueAt(tabla.getValueAt(j, i), j, i);
+                    } else {
+                        String numero1 = String.valueOf(tabla.getValueAt(j, i));
+                        String numero2 = String.valueOf(tabla.getValueAt(j, i+1));
+                        int resta = on.point_to_number(numero2) - on.point_to_number(numero1);
+//                        //System.out.println("resta" + resta);
+                        String res = on.getNumero(resta);
+//                        System.out.println("resta" + res);
+                        tabla2.setValueAt(res, j, i);
+                    }
+                }
+            }
+//            if (tabla.getColumnName(i).toLowerCase().equals("enero")) {
+//                System.out.print("enero" + i);
+//                for (int j = 0; j < tabla.getRowCount(); j++) {
+//                    String numero = String.valueOf(tabla.getValueAt(j, i));
+//                    String num = on.getNumero(Integer.valueOf(numero));
+//                    tabla.setValueAt(num, j, i);
+//                }
+//            } else {
+//                System.out.print("mes" + tabla.getColumnName(i));
+//                for (int j = 0; j < tabla.getRowCount(); j++) {
+//                    String numero2 = String.valueOf(tabla.getValueAt(j, i));
+//                    String numero1 = String.valueOf(tabla.getValueAt(j, i-1));
+//                    int resta = on.point_to_number(numero2) - on.point_to_number(numero1);
+//                    //System.out.println("resta" + resta);
+//                    String res = on.getNumero(resta);
+//                    System.out.println("resta" + res);
+//                    tabla.setValueAt(res, j, i);
+//                }
+//            }
+        }
+        load.limpiar(tabla);
+        tabla.setModel(tabla2.getModel());
+
+//        for (int i = 2; i < tabla.getColumnCount() - 1; i++) {
+//            if (!(tabla.getColumnName(i).toLowerCase().equals("enero"))) {
+//                String nomCol = tabla.getColumnName(i) + "-" + tabla.getColumnName(i);
+//                tabla.getColumn(tabla.getColumnName(i-1)).setHeaderValue(nomCol);
+//            }
+//        }
+//        TableColumnModel tcm = tabla.getColumnModel();
+//        // Se pide la columna por su número, empezando en cero.
+//        TableColumn columnaABorrar = tcm.getColumn(tabla.getColumnCount() - 1);
+//        tabla.removeColumn(columnaABorrar);
     }
 
 }
