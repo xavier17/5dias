@@ -112,62 +112,48 @@ public class ControladorCuenResul {
         columnModel.getColumn(1).setPreferredWidth(250);
     }
 
-    public void restar(JTable tabla) {
+    public void cuenResul(JTable tabla) {
+        int filas = tabla.getRowCount();
+        int col = tabla.getColumnCount() - 3;
+        int iteCol = 3;
+        if (tabla.getColumnName(2).toLowerCase().equals("enero")) {
+            col = tabla.getColumnCount() - 2;
+            iteCol = 2;
+        }
+        int[][] resultado = new int[filas][col];
 
-        TableModel model = tabla.getModel();
-        JTable tabla2 = new JTable(model);
-        //tabla.setModel(model);
-        for (int i = 0; i < tabla.getColumnCount()-1; i++) {
+        for (int i = iteCol; i < tabla.getColumnCount(); i++) {
             for (int j = 0; j < tabla.getRowCount(); j++) {
-                if (i < 2) {
-                    tabla2.setValueAt(tabla.getValueAt(j, i), j, i);
+                if (!(tabla.getColumnName(i).toLowerCase().equals("enero"))) {
+                    String numero1 = String.valueOf(tabla.getValueAt(j, i - 1));
+                    String numero2 = String.valueOf(tabla.getValueAt(j, i));
+                    int resta = on.point_to_number(numero2) - on.point_to_number(numero1);
+                    //System.out.println("numero1 " + numero1 + " numero2 " + numero2 + " resta " + resta);
+                    //String res = on.getNumero(resta);
+//                        System.out.println("resta" +  res);
+                    resultado[j][i - iteCol] = resta;
                 } else {
-                    if (tabla.getColumnName(i).toLowerCase().equals("enero")) {
-                        tabla2.setValueAt(tabla.getValueAt(j, i), j, i);
-                    } else {
-                        String numero1 = String.valueOf(tabla.getValueAt(j, i));
-                        String numero2 = String.valueOf(tabla.getValueAt(j, i+1));
-                        int resta = on.point_to_number(numero2) - on.point_to_number(numero1);
-//                        //System.out.println("resta" + resta);
-                        String res = on.getNumero(resta);
-//                        System.out.println("resta" + res);
-                        tabla2.setValueAt(res, j, i);
-                    }
+                    String numero1 = String.valueOf(tabla.getValueAt(j, i));
+                    resultado[j][i - iteCol] = on.point_to_number(numero1);
                 }
             }
-//            if (tabla.getColumnName(i).toLowerCase().equals("enero")) {
-//                System.out.print("enero" + i);
-//                for (int j = 0; j < tabla.getRowCount(); j++) {
-//                    String numero = String.valueOf(tabla.getValueAt(j, i));
-//                    String num = on.getNumero(Integer.valueOf(numero));
-//                    tabla.setValueAt(num, j, i);
-//                }
-//            } else {
-//                System.out.print("mes" + tabla.getColumnName(i));
-//                for (int j = 0; j < tabla.getRowCount(); j++) {
-//                    String numero2 = String.valueOf(tabla.getValueAt(j, i));
-//                    String numero1 = String.valueOf(tabla.getValueAt(j, i-1));
-//                    int resta = on.point_to_number(numero2) - on.point_to_number(numero1);
-//                    //System.out.println("resta" + resta);
-//                    String res = on.getNumero(resta);
-//                    System.out.println("resta" + res);
-//                    tabla.setValueAt(res, j, i);
-//                }
-//            }
         }
-        load.limpiar(tabla);
-        tabla.setModel(tabla2.getModel());
 
-//        for (int i = 2; i < tabla.getColumnCount() - 1; i++) {
-//            if (!(tabla.getColumnName(i).toLowerCase().equals("enero"))) {
-//                String nomCol = tabla.getColumnName(i) + "-" + tabla.getColumnName(i);
-//                tabla.getColumn(tabla.getColumnName(i-1)).setHeaderValue(nomCol);
-//            }
-//        }
-//        TableColumnModel tcm = tabla.getColumnModel();
-//        // Se pide la columna por su número, empezando en cero.
-//        TableColumn columnaABorrar = tcm.getColumn(tabla.getColumnCount() - 1);
-//        tabla.removeColumn(columnaABorrar);
+        //Se borra la primera columna si no comienza con enero
+        if (!(tabla.getColumnName(2).toLowerCase().equals("enero"))) {
+            TableColumnModel tcm = tabla.getColumnModel();
+            TableColumn columnaABorrar = tcm.getColumn(2);
+            tabla.removeColumn(columnaABorrar);
+        }
+
+        for (int i = 0; i < filas; i++) {
+            for (int j = 0; j < col; j++) {
+                System.out.print("  fila[" + i + " ] columna[ " + j + " ] = " + resultado[i][j]);
+                String numero = on.getNumero(resultado[i][j]);
+                tabla.setValueAt(numero, i, j+2);
+            }
+            System.out.print("\n");
+        }
     }
 
 }

@@ -225,7 +225,6 @@ public class CuentaResultado extends javax.swing.JFrame {
         jLabel9 = new javax.swing.JLabel();
         jButton7 = new javax.swing.JButton();
         jButton8 = new javax.swing.JButton();
-        jButton9 = new javax.swing.JButton();
         jScrollPane4 = new javax.swing.JScrollPane();
         jListCuenResul = new javax.swing.JList();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -480,13 +479,6 @@ public class CuentaResultado extends javax.swing.JFrame {
             }
         });
 
-        jButton9.setText(org.openide.util.NbBundle.getMessage(CuentaResultado.class, "CuentaResultado.jButton9.text")); // NOI18N
-        jButton9.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton9ActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
@@ -496,7 +488,7 @@ public class CuentaResultado extends javax.swing.JFrame {
                 .addComponent(jLabel7)
                 .addGap(7, 7, 7)
                 .addComponent(jComboBox4, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addGap(80, 80, 80)
                 .addComponent(jLabel6)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -512,9 +504,7 @@ public class CuentaResultado extends javax.swing.JFrame {
                 .addComponent(jButton6)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jButton5)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton9)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jButton7)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton8)
@@ -527,17 +517,16 @@ public class CuentaResultado extends javax.swing.JFrame {
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jButton7)
-                        .addComponent(jButton8))
-                    .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel6)
-                        .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jTextField8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel9)
-                        .addComponent(jButton6)
+                        .addComponent(jButton8)
                         .addComponent(jButton5)
-                        .addComponent(jButton9))
+                        .addComponent(jButton6)
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel6)
+                            .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jTextField8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel9)))
                     .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jComboBox4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel7)))
@@ -637,7 +626,14 @@ public class CuentaResultado extends javax.swing.JFrame {
         inBancos(mb);
         //ArrayList<ModeloBanco> listaMeses = new ArrayList<ModeloBanco>();
         if (date) {
+            if(mb.getPer1()<2008 || mb.getPer2()<2008){
+                control.mensaje_error("Periodo incorrecto");
+                return;
+            }
             try {
+                if(mb.getMes1()!=1){
+                    mb.setMes1(mb.getMes1()-1);//agrega un mes mas para el rango de busqueda en meses
+                }                
                 for (int i = 0; i < cuenta.length; i++) {
                     GregorianCalendar gcal = new GregorianCalendar();
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM");
@@ -659,7 +655,7 @@ public class CuentaResultado extends javax.swing.JFrame {
                     CR.cuentaResulDesdeHasta(mb, jTable1);
                     CR.ModJtable(jTable1);
                 }
-                //CR.restar(jTable1);
+                CR.cuenResul(jTable1);
             } catch (ParseException ex) {
                 Exceptions.printStackTrace(ex);
             }
@@ -781,17 +777,6 @@ public class CuentaResultado extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton8ActionPerformed
 
-    private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
-        // Restar
-        if (jTable1.getRowCount() <= 0) {
-            control.mensaje_error("La tabla esta vacía");
-            return;
-        }
-        CR.restar(jTable1);
-
-        
-    }//GEN-LAST:event_jButton9ActionPerformed
-
     /**
      * @param args the command line arguments
      */
@@ -833,7 +818,6 @@ public class CuentaResultado extends javax.swing.JFrame {
     private javax.swing.JButton jButton6;
     private javax.swing.JButton jButton7;
     private javax.swing.JButton jButton8;
-    private javax.swing.JButton jButton9;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JCheckBox jCheckBox10;
     private javax.swing.JCheckBox jCheckBox11;
