@@ -15,7 +15,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
@@ -116,7 +120,9 @@ public class ControladorCuenResul {
         int filas = tabla.getRowCount();
         int col = tabla.getColumnCount() - 3;
         int iteCol = 3;
-        if (tabla.getColumnName(2).toLowerCase().equals("enero")) {
+        String primeraCol = tabla.getColumnName(2).toString().substring(0, 3);
+
+        if (primeraCol.equals("ENE")) {
             col = tabla.getColumnCount() - 2;
             iteCol = 2;
         }
@@ -124,7 +130,8 @@ public class ControladorCuenResul {
 
         for (int i = iteCol; i < tabla.getColumnCount(); i++) {
             for (int j = 0; j < tabla.getRowCount(); j++) {
-                if (!(tabla.getColumnName(i).toLowerCase().equals("enero"))) {
+                String nomCol = tabla.getColumnName(i).toString().substring(0, 3);
+                if (!(nomCol.equals("ENE"))) {
                     String numero1 = String.valueOf(tabla.getValueAt(j, i - 1));
                     String numero2 = String.valueOf(tabla.getValueAt(j, i));
                     int resta = on.point_to_number(numero2) - on.point_to_number(numero1);
@@ -140,7 +147,7 @@ public class ControladorCuenResul {
         }
 
         //Se borra la primera columna si no comienza con enero
-        if (!(tabla.getColumnName(2).toLowerCase().equals("enero"))) {
+        if (!(primeraCol.equals("ENE"))) {
             TableColumnModel tcm = tabla.getColumnModel();
             TableColumn columnaABorrar = tcm.getColumn(2);
             tabla.removeColumn(columnaABorrar);
@@ -148,11 +155,59 @@ public class ControladorCuenResul {
 
         for (int i = 0; i < filas; i++) {
             for (int j = 0; j < col; j++) {
-                System.out.print("  fila[" + i + " ] columna[ " + j + " ] = " + resultado[i][j]);
+                //System.out.print("  fila[" + i + " ] columna[ " + j + " ] = " + resultado[i][j]);
                 String numero = on.getNumero(resultado[i][j]);
-                tabla.setValueAt(numero, i, j+2);
+                tabla.setValueAt(numero, i, j + 2);
             }
-            System.out.print("\n");
+            //   System.out.print("\n");
+        }
+    }
+
+    public void truncate(String tabla) {
+        try {
+            Statement st = c.createStatement();
+            String sentencia = "truncate " + tabla;
+            st.executeUpdate(sentencia);
+            st.close();
+        } catch (SQLException ex) {
+            control.mensaje_error(ex.getMessage());
+        }
+    }
+
+//    public void insertReportCuenResul(ArrayList<ModeloBanco> lista) {
+    public void insertReportCuenResul(JTable tabla) {
+        try {
+            String s = "INSERT INTO reportcuenresul (alias,cuenta,mes,total)\n"
+                    + "VALUES(?,?,?,?)";
+            PreparedStatement st = c.prepareStatement(s);
+            for (int i = 2; i < tabla.getColumnCount(); i++) {
+                for (int j = 0; j < tabla.getRowCount(); j++) {
+                    st.setString(1, tabla.getValueAt(j, 0).toString());
+                    st.setString(2, tabla.getValueAt(j, 1).toString());
+                    st.setString(3, tabla.getColumnName(i));
+                    String total = tabla.getValueAt(j, i).toString();
+                    st.setInt(4, on.point_to_number(total));
+                    st.addBatch();
+                }
+            }
+            st.executeBatch();
+//            for (int i = 0; i < lista.size(); i++) {
+//                ModeloBanco mb = lista.get(i);
+//                System.out.println(mb.getBanco());
+//                PreparedStatement pstmt = c.prepareStatement("INSERT INTO reportcuenresul (alias,cuenta,mes,total)\n"
+//                    + "VALUES(?,?,?,?)");
+//                ModeloBanco mb = lista.get(i);
+//                pstmt.setString(1, mb.getBanco());
+//                pstmt.setString(2, mb.getCuenta());
+//                pstmt.setString(3, mb.getNombremes1());
+//                pstmt.setInt(4, mb.getTotal());
+//                System.out.println("Banco"+mb.getBanco());
+//                pstmt.execute();
+//                //System.out.print(pstmt.toString());
+
+            // pstmt.close();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

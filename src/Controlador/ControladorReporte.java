@@ -111,6 +111,46 @@ public class ControladorReporte {
         }
     }
     
+    public void ejecutarReporteCuentaResul(ModeloReport MR) {
+        try {
+            
+            String directorio_actual = System.getProperty("user.dir");
+            String separador = System.getProperty("file.separator");
+            String master = directorio_actual + separador + "src" + separador + "Reportes" + separador + MR.getNombreJasper();
+
+            File file = new File(master);
+            if (master == null) {
+                JOptionPane.showMessageDialog(null, "Error Cargando el master", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+            System.err.println(file);
+            JasperReport masterReport = null;
+            try {
+                masterReport = (JasperReport) JRLoader.loadObject(file);
+            } catch (JRException e) {
+                System.out.println("Error cargando el reporte maestro: " + e.getMessage());
+            }
+            
+            String imagen = directorio_actual + separador + "src" + separador + "images" + separador + "logo.png";
+            Map parametro = new HashMap();
+            parametro.put("titulo", MR.getTit());
+            parametro.put("logo", imagen);
+
+            Connection c = Conexion.getCon();
+
+            try {
+                JasperPrint jasperPrint = JasperFillManager.fillReport(masterReport, parametro, c);
+
+                String ruta = directorio_actual + separador + "Reportes" + separador + MR.getNombrePDF();
+                System.out.print("Ruta " + ruta);
+                JasperExportManager.exportReportToPdfFile(jasperPrint, ruta);
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (Exception j) {
+            JOptionPane.showMessageDialog(null, j.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
     public void imprimirReporte(ModeloReport mr, ModeloBanco mb) {
         try {
             String directorio_actual = System.getProperty("user.dir");

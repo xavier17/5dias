@@ -30,6 +30,8 @@ public class ModeloBanco {
     private String nombrepdf;
     private String inBancoquery;
     private int posicionCol;
+    private String Banco;
+    private int total;
     /**
      * @return the desde
      */
@@ -259,6 +261,34 @@ public class ModeloBanco {
      */
     public void setPosicionCol(int posicionCol) {
         this.posicionCol = posicionCol;
+    }
+
+    /**
+     * @return the Banco
+     */
+    public String getBanco() {
+        return Banco;
+    }
+
+    /**
+     * @param Banco the Banco to set
+     */
+    public void setBanco(String Banco) {
+        this.Banco = Banco;
+    }
+
+    /**
+     * @return the total
+     */
+    public int getTotal() {
+        return total;
+    }
+
+    /**
+     * @param total the total to set
+     */
+    public void setTotal(int total) {
+        this.total = total;
     }
 
 }

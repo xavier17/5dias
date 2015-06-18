@@ -5,11 +5,9 @@
         <group>
             <file>file:/C:/Users/FedeXavier/Documents/NetBeansProjects/5dias%202.0/5dias/src/Controlador/ControladorCuenResul.java</file>
             <file>file:/C:/Users/FedeXavier/Documents/NetBeansProjects/5dias%202.0/5dias/src/Modelo/ModeloBanco.java</file>
-            <file>file:/C:/Users/FedeXavier/Documents/NetBeansProjects/5dias%202.0/5dias/src/Conexion/Cargar.java</file>
-            <file>file:/C:/Users/FedeXavier/Documents/NetBeansProjects/5dias%202.0/5dias/src/Vista/Portada.java</file>
             <file>file:/C:/Users/FedeXavier/Documents/NetBeansProjects/5dias%202.0/5dias/src/Vista/CuentaResultado.java</file>
-            <file>file:/C:/Users/FedeXavier/Documents/NetBeansProjects/5dias%202.0/5dias/src/Vista/InformacionAdicional.java</file>
             <file>file:/C:/Users/FedeXavier/Documents/NetBeansProjects/5dias%202.0/5dias/src/Vista/BalanceGeneral.java</file>
+            <file>file:/C:/Users/FedeXavier/Documents/NetBeansProjects/5dias%202.0/5dias/src/Conexion/ObtenerFecha.java</file>
         </group>
     </open-files>
 </project-private>

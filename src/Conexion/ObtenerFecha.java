@@ -45,11 +45,11 @@ public class ObtenerFecha {
         return fecha;
     }
 
-    public int obtenerAnho(Date fecha) {
-        String formato = "yyyy";
-        SimpleDateFormat dateFormat = new SimpleDateFormat(formato);
-        return Integer.parseInt(dateFormat.format(fecha));
-    }
+//    public int obtenerAnho(Date fecha) {
+//        String formato = "yyyy";
+//        SimpleDateFormat dateFormat = new SimpleDateFormat(formato);
+//        return Integer.parseInt(dateFormat.format(fecha));
+//    }
 
     public Date Fechareturn(String fecha) {
         SimpleDateFormat formatoDelTexto = new SimpleDateFormat("yyyy-MM-dd");
@@ -136,6 +136,11 @@ public class ObtenerFecha {
                 + dia + "/" + (mes + 1) + "/" + año);
         System.out.printf("Hora Actual: %02d:%02d:%02d %n",
                 hora, minuto, segundo);
+    }
+
+    public String obtenerformato(Date fecha, String formato) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(formato);
+        return String.valueOf(dateFormat.format(fecha));
     }
 
     public String NombreMes(int mes) {
